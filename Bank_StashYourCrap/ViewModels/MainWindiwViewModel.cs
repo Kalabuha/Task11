@@ -9,7 +9,7 @@ using Bank_StashYourCrap.Localizations;
 using Bank_StashYourCrap.Localizations.Base;
 using Bank_StashYourCrap.ViewModels.Base;
 using Bank_StashYourCrap.Bank.Services;
-using Bank_StashYourCrap.Bank.Data;
+using Bank_StashYourCrap.Bank.DataContext;
 using Bank_StashYourCrap.Bank.PeopleModels.Employees;
 using Bank_StashYourCrap.Bank.PeopleModels.Clients;
 using Bank_StashYourCrap.Commands;
@@ -19,18 +19,18 @@ namespace Bank_StashYourCrap.ViewModels
     internal class MainWindiwViewModel : BaseViewModel
     {
         private readonly ServiceClientsData _clientsService;
-        private readonly ServiceEmployeesData _employeesService;
+        //private readonly ServiceEmployeesData _employeesService;
 
         public MainWindiwViewModel()
         {
-            var repository = new RepositoryPeopleData(@"..\..\..\Bank\Data");
+            var repository = new RepositoryPeopleData();
 
             _clientsService = new ServiceClientsData(repository);
-            _employeesService = new ServiceEmployeesData(repository);
+            //_employeesService = new ServiceEmployeesData(repository);
 
             Localization = new RusLang();
 
-            Clients = _appData.GetAllClients();
+            Clients = _clientsService.GetAllClients();
 
             Title = Localization.StringLibrary[0];
             UserRegistrationChecks();
@@ -53,7 +53,6 @@ namespace Bank_StashYourCrap.ViewModels
         public Localization Localization { get; }
 
 
-
         #region Свойство заглавие окна
         private string _title = default!;
         public string Title
@@ -64,7 +63,7 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Свойство статус программы
-        private string _status;
+        private string _status = default!;
         public string Status
         {
             get => _status;
@@ -73,8 +72,8 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Свойство пользователь, который вошёл в систему
-        private Employee _registeredUser = null!;
-        public Employee RegisteredUser
+        private Employee? _registeredUser = null!;
+        public Employee? RegisteredUser
         {
             get => _registeredUser;
             set => Set(ref _registeredUser, value);
@@ -82,8 +81,8 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Свойство выбранный клиент из списка всех клиентов
-        private Client _selectedClient;
-        public Client SelectedClient
+        private Client? _selectedClient;
+        public Client? SelectedClient
         {
             get => _selectedClient;
             set => Set(ref _selectedClient, value);
@@ -96,7 +95,7 @@ namespace Bank_StashYourCrap.ViewModels
 
 
         #region Команда создать нового клиента
-        public ICommand CrateNewClientCommand { get; private set; }
+        public ICommand CrateNewClientCommand { get; private set; } = default!;
 
         private void OnExecuteCrateNewClientCommand(object parameter)
         {
@@ -110,7 +109,7 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Команда изменить выбранного клиента
-        public ICommand EditClientCommand { get; private set; }
+        public ICommand EditClientCommand { get; private set; } = default!;
 
         private void OnExecuteEditClientCommand(object parameter)
         {
@@ -124,7 +123,7 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Команда удалить выбранного клиента
-        public ICommand DeleteClientCommand { get; private set; }
+        public ICommand DeleteClientCommand { get; private set; } = default!;
 
         private void OnExecuteDeleteClientCommand(object parameter)
         {
@@ -133,6 +132,10 @@ namespace Bank_StashYourCrap.ViewModels
 
         private bool CanExecuteDeleteClientCommand(object parameter)
         {
+            if (true)
+            {
+
+            }
             return true;
         }
         #endregion
@@ -143,7 +146,7 @@ namespace Bank_StashYourCrap.ViewModels
 
             if (user == null)
             {
-                Status = Localization.StringLibrary[12];
+                Status = Localization.StringLibrary[13];
             }
             else
             {
