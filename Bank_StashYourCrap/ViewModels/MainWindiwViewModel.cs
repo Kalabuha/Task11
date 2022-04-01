@@ -8,6 +8,7 @@ using System.Windows.Input;
 using Bank_StashYourCrap.Localizations;
 using Bank_StashYourCrap.Localizations.Base;
 using Bank_StashYourCrap.ViewModels.Base;
+using Bank_StashYourCrap.Bank.Services;
 using Bank_StashYourCrap.Bank.Data;
 using Bank_StashYourCrap.Bank.PeopleModels.Employees;
 using Bank_StashYourCrap.Bank.PeopleModels.Clients;
@@ -17,13 +18,16 @@ namespace Bank_StashYourCrap.ViewModels
 {
     internal class MainWindiwViewModel : BaseViewModel
     {
-        private readonly AppData _appData;
-
-        public Localization Localization { get; }
+        private readonly ServiceClientsData _clientsService;
+        private readonly ServiceEmployeesData _employeesService;
 
         public MainWindiwViewModel()
         {
-            _appData = new AppData();
+            var repository = new RepositoryPeopleData(@"..\..\..\Bank\Data");
+
+            _clientsService = new ServiceClientsData(repository);
+            _employeesService = new ServiceEmployeesData(repository);
+
             Localization = new RusLang();
 
             Clients = _appData.GetAllClients();
@@ -45,6 +49,9 @@ namespace Bank_StashYourCrap.ViewModels
             DeleteClientCommand = new ActionCommand(
                 execute: OnExecuteDeleteClientCommand, can: CanExecuteDeleteClientCommand);
         }
+
+        public Localization Localization { get; }
+
 
 
         #region Свойство заглавие окна
