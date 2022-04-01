@@ -1,0 +1,185 @@
+[
+  {
+    "Accounts": [
+      {
+        "TypeAccount": 4,
+        "NumberAccount": 36575902155756
+      }
+    ],
+    "Name": "Mordecai",
+    "Surname": "Artemis",
+    "Patronymic": "Hunter",
+    "PhoneNumbers": [
+      "75435744292"
+    ],
+    "PassportSeries": 1651,
+    "PassportNumber": 589124
+  },
+  {
+    "Accounts": [
+      {
+        "TypeAccount": 0,
+        "NumberAccount": 69844387819559
+      },
+      {
+        "TypeAccount": 5,
+        "NumberAccount": 97434361586721
+      }
+    ],
+    "Name": "Roland",
+    "Surname": "Crimson",
+    "Patronymic": "Scorpio",
+    "PhoneNumbers": [
+      "79514734545"
+    ],
+    "PassportSeries": 7237,
+    "PassportNumber": 265721
+  },
+  {
+    "Accounts": [
+      {
+        "TypeAccount": 2,
+        "NumberAccount": 42053655512980
+      }
+    ],
+    "Name": "Lilith",
+    "Surname": "Dionysus",
+    "Patronymic": "Siren",
+    "PhoneNumbers": [
+      "79188169892",
+      "79347970373"
+    ],
+    "PassportSeries": 1743,
+    "PassportNumber": 977212
+  },
+  {
+    "Accounts": [
+      {
+        "TypeAccount": 1,
+        "NumberAccount": 44958264288692
+      }
+    ],
+    "Name": "Brick",
+    "Surname": "Berserker",
+    "Patronymic": "Menoetius",
+    "PhoneNumbers": [
+      "79020079289"
+    ],
+    "PassportSeries": 9521,
+    "PassportNumber": 293144
+  },
+  {
+    "Accounts": [
+      {
+        "TypeAccount": 0,
+        "NumberAccount": 96280399188683
+      }
+    ],
+    "Name": "Maya",
+    "Surname": "Athenas",
+    "Patronymic": "Harms",
+    "PhoneNumbers": [
+      "79031972472",
+      "79817156936",
+      "79713168859"
+    ],
+    "PassportSeries": 8790,
+    "PassportNumber": 543128
+  },
+  {
+    "Accounts": [
+      {
+        "TypeAccount": 3,
+        "NumberAccount": 16405363778959
+      }
+    ],
+    "Name": "Salvador",
+    "Surname": "Ovejas",
+    "Patronymic": "Gunzerker",
+    "PhoneNumbers": [
+      "79607297739"
+    ],
+    "PassportSeries": 1127,
+    "PassportNumber": 924712
+  },
+  {
+    "Accounts": [
+      {
+        "TypeAccount": 4,
+        "NumberAccount": 59590665053100
+      }
+    ],
+    "Name": "Axton",
+    "Surname": "Dahl",
+    "Patronymic": "Hieronymous",
+    "PhoneNumbers": [
+      "79749538897"
+    ],
+    "PassportSeries": 6311,
+    "PassportNumber": 212954
+  },
+  {
+    "Accounts": [
+      {
+        "TypeAccount": 0,
+        "NumberAccount": 62614252227817
+      }
+    ],
+    "Name": "Mike",
+    "Surname": "Haiku",
+    "Patronymic": "Zero",
+    "PhoneNumbers": [
+      "79483821209"
+    ],
+    "PassportSeries": 7182,
+    "PassportNumber": 725671
+  },
+  {
+    "Accounts": [
+      {
+        "TypeAccount": 5,
+        "NumberAccount": 27840255191842
+      }
+    ],
+    "Name": "Gaige",
+    "Surname": "Mechroman",
+    "Patronymic": "Leigh",
+    "PhoneNumbers": [
+      "79915079730"
+    ],
+    "PassportSeries": 6541,
+    "PassportNumber": 512560
+  },
+  {
+    "Accounts": [
+      {
+        "TypeAccount": 2,
+        "NumberAccount": 77096394294894
+      }
+    ],
+    "Name": "Krieg",
+    "Surname": "Benedict",
+    "Patronymic": "Psycho",
+    "PhoneNumbers": [
+      "79892577621"
+    ],
+    "PassportSeries": 6321,
+    "PassportNumber": 272086
+  },
+  {
+    "Accounts": [
+      {
+        "TypeAccount": 3,
+        "NumberAccount": 22224201933994
+      }
+    ],
+    "Name": "Lydia",
+    "Surname": "Athena",
+    "Patronymic": "Mackay",
+    "PhoneNumbers": [
+      "79114670315"
+    ],
+    "PassportSeries": 3611,
+    "PassportNumber": 641487
+  }
+]
