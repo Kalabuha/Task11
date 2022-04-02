@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Bank_StashYourCrap.Bank.DataContext;
+using Bank_StashYourCrap.Bank.PeopleModels.Clients;
+using Bank_StashYourCrap.Mappers;
+using Bank_StashYourCrap.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Bank_StashYourCrap.Bank.DataContext;
-using Bank_StashYourCrap.Bank.PeopleModels.Clients;
 
 namespace Bank_StashYourCrap.Bank.Services
 {
@@ -19,55 +18,59 @@ namespace Bank_StashYourCrap.Bank.Services
         }
 
         // Проверка коллекции данных на совподения
-        public ObservableCollection<Client> FindMatchingPassportsInDataCollection()
+        public ObservableCollection<ClientModel> FindMatchingPassportsInDataCollection()
         {
-            var allClients = _repository.GetCollectionPeople<Client>() ?? new ObservableCollection<Client>();
+            var allClientsEntities = _repository.GetCollectionPeople<Client>() ?? new List<Client>();
 
+            // HashSet нужен только для проверки совподений паспортов
             var uniqueClients = new HashSet<(int series, int number)>();
-            var duplicateClients = new ObservableCollection<Client>();
 
-            foreach (var client in allClients)
+            var duplicateClientsModels = new ObservableCollection<ClientModel>();
+            foreach (var clientEntity in allClientsEntities)
             {
-                var isAdded = uniqueClients.Add((client.PassSeries, client.PassNumber));
+                var isAdded = uniqueClients.Add((clientEntity.PassSeries, clientEntity.PassNumber));
                 if (!isAdded)
                 {
-                    duplicateClients.Add(client);
+                    duplicateClientsModels.Add(clientEntity.ConvertEntityToModel());
                 }
             }
-            return duplicateClients;
+            return duplicateClientsModels;
         }
 
-        public ObservableCollection<Client> GetAllClients()
-        {
-            var allClients = _repository.GetCollectionPeople<Client>();
 
-            return allClients ?? new ObservableCollection<Client>();
+        public ObservableCollection<ClientModel> GetAllClients()
+        {
+            var allClientsEntities = _repository.GetCollectionPeople<Client>() ?? new List<Client>();
+
+            var allClientsModels = allClientsEntities.Select(c => c.ConvertEntityToModel());
+
+            return new ObservableCollection<ClientModel>(allClientsModels);
         }
 
-        public bool AddClient(Client newClient)
+        public bool AddClient(ClientModel newClientModel)
         {
-            var client = _repository.GetOneMan<Client>(newClient.PassSeries, newClient.PassNumber);
+            var clientEntity = _repository.GetOneMan<Client>(newClientModel.PassSeries, newClientModel.PassNumber);
 
             // Если будет получен результат отличный от null, добовлять нельзя.
-            if (client != null)
+            if (clientEntity != null)
             {
                 return false;
             }
 
-            _repository.AddOneMan(newClient);
+            _repository.AddMan(newClientModel.ConvertModelToEntity());
             return true;
         }
 
-        public void EditClient(Client newClient)
+        public void EditClient(ClientModel editClientModel)
         {
             // Если разрешить изменение паспорта, то здесь необходимо сделать проверку на совподения.
-            _repository.EditMan(newClient);
+            _repository.EditMan(editClientModel.ConvertModelToEntity());
         }
 
-        public void DeleteClient(Client newClient)
+        public void DeleteClient(ClientModel deleteClientModel)
         {
             // Это же банковское приложение. Тут можно сделать запрет удаления должников банка :)
-            _repository.DeleteMan(newClient);
+            _repository.DeleteMan(deleteClientModel.ConvertModelToEntity());
         }
 
     }

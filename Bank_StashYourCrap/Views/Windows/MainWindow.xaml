@@ -82,6 +82,9 @@
                         <TextBlock Text="{Binding Localization.StringLibrary[18]}"/>
                         <TextBlock Text="{Binding Localization.StringLibrary[19]}"/>
                         <TextBlock Text="{Binding Localization.StringLibrary[20]}"/>
+                        <TextBlock Text="{Binding Localization.StringLibrary[21]}"/>
+                        <TextBlock Text="{Binding Localization.StringLibrary[22]}"/>
+                        <TextBlock Text="{Binding Localization.StringLibrary[23]}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" DataContext="{Binding SelectedClient}">
@@ -89,6 +92,13 @@
                         <TextBlock Text="{Binding Surname}"/>
                         <TextBlock Text="{Binding Patronymic}"/>
                         <TextBlock Text="{Binding PassSeries}"/>
+                        <TextBlock Text="{Binding PassNumber}"/>
+                        <ListView ItemsSource="{Binding PhoneNumbers}">
+
+                        </ListView>
+                        <ListView ItemsSource="{Binding Accounts}" DisplayMemberPath="NumberAccount">
+                            
+                        </ListView>
                     </StackPanel>
                 </Grid>
             </GroupBox>

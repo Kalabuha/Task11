@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using Bank_StashYourCrap.Bank.PeopleModels.Base;
 using Bank_StashYourCrap.Bank.BankModels;
 
@@ -6,6 +6,6 @@ namespace Bank_StashYourCrap.Bank.PeopleModels.Clients
 {
     internal class Client : Human
     {
-        public ObservableCollection<BankAccount> Accounts { get; set; } = new();
+        public List<BankAccount> Accounts { get; set; } = new();
     }
 }

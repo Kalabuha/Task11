@@ -10,6 +10,8 @@ using Bank_StashYourCrap.Localizations.Base;
 using Bank_StashYourCrap.ViewModels.Base;
 using Bank_StashYourCrap.Bank.Services;
 using Bank_StashYourCrap.Bank.DataContext;
+using Bank_StashYourCrap.Models;
+using Bank_StashYourCrap.Mappers;
 using Bank_StashYourCrap.Bank.PeopleModels.Employees;
 using Bank_StashYourCrap.Bank.PeopleModels.Clients;
 using Bank_StashYourCrap.Commands;
@@ -19,23 +21,30 @@ namespace Bank_StashYourCrap.ViewModels
     internal class MainWindiwViewModel : BaseViewModel
     {
         private readonly ServiceClientsData _clientsService;
-        //private readonly ServiceEmployeesData _employeesService;
+        private readonly ServiceEmployeesData _employeesService;
+
+        public Localization Localization { get; private set; }
 
         public MainWindiwViewModel()
         {
             var repository = new RepositoryPeopleData();
-
             _clientsService = new ServiceClientsData(repository);
-            //_employeesService = new ServiceEmployeesData(repository);
+            _employeesService = new ServiceEmployeesData(repository);
 
-            Localization = new RusLang();
+            SetupLocalization();
 
             Clients = _clientsService.GetAllClients();
 
-            Title = Localization.StringLibrary[0];
+            Title = Localization!.StringLibrary[0];
             UserRegistrationChecks();
 
             СonstructAllCommands();
+        }
+
+        private void SetupLocalization()
+        {
+            Localization = new RusLang();
+            ClientEntityModelConverter.SetLocalization(Localization);
         }
 
         private void СonstructAllCommands()
@@ -49,9 +58,6 @@ namespace Bank_StashYourCrap.ViewModels
             DeleteClientCommand = new ActionCommand(
                 execute: OnExecuteDeleteClientCommand, can: CanExecuteDeleteClientCommand);
         }
-
-        public Localization Localization { get; }
-
 
         #region Свойство заглавие окна
         private string _title = default!;
@@ -72,8 +78,8 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Свойство пользователь, который вошёл в систему
-        private Employee? _registeredUser = null!;
-        public Employee? RegisteredUser
+        private EmployeeModel? _registeredUser = null!;
+        public EmployeeModel? RegisteredUser
         {
             get => _registeredUser;
             set => Set(ref _registeredUser, value);
@@ -81,8 +87,8 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Свойство выбранный клиент из списка всех клиентов
-        private Client? _selectedClient;
-        public Client? SelectedClient
+        private ClientModel? _selectedClient;
+        public ClientModel? SelectedClient
         {
             get => _selectedClient;
             set => Set(ref _selectedClient, value);
@@ -90,7 +96,7 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Свойство коллекция всех клиентов
-        public ObservableCollection<Client>? Clients { get; set; }
+        public ObservableCollection<ClientModel>? Clients { get; set; }
         #endregion
 
 
@@ -150,7 +156,7 @@ namespace Bank_StashYourCrap.ViewModels
             }
             else
             {
-                Status = Localization.StringLibrary[13] + $"{RegisteredUser.Name}";
+                Status = Localization.StringLibrary[13] + $"{RegisteredUser?.Name}";
             }
         }
 

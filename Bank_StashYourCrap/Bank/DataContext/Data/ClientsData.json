@@ -12,8 +12,8 @@
     "PhoneNumbers": [
       "75435744292"
     ],
-    "PassportSeries": 1651,
-    "PassportNumber": 589124
+    "PassSeries": 1651,
+    "PassNumber": 589124
   },
   {
     "Accounts": [
@@ -32,8 +32,8 @@
     "PhoneNumbers": [
       "79514734545"
     ],
-    "PassportSeries": 7237,
-    "PassportNumber": 265721
+    "PassSeries": 7237,
+    "PassNumber": 265721
   },
   {
     "Accounts": [
@@ -49,8 +49,8 @@
       "79188169892",
       "79347970373"
     ],
-    "PassportSeries": 1743,
-    "PassportNumber": 977212
+    "PassSeries": 1743,
+    "PassNumber": 977212
   },
   {
     "Accounts": [
@@ -65,8 +65,8 @@
     "PhoneNumbers": [
       "79020079289"
     ],
-    "PassportSeries": 9521,
-    "PassportNumber": 293144
+    "PassSeries": 9521,
+    "PassNumber": 293144
   },
   {
     "Accounts": [
@@ -83,8 +83,8 @@
       "79817156936",
       "79713168859"
     ],
-    "PassportSeries": 8790,
-    "PassportNumber": 543128
+    "PassSeries": 8790,
+    "PassNumber": 543128
   },
   {
     "Accounts": [
@@ -99,8 +99,8 @@
     "PhoneNumbers": [
       "79607297739"
     ],
-    "PassportSeries": 1127,
-    "PassportNumber": 924712
+    "PassSeries": 1127,
+    "PassNumber": 924712
   },
   {
     "Accounts": [
@@ -115,8 +115,8 @@
     "PhoneNumbers": [
       "79749538897"
     ],
-    "PassportSeries": 6311,
-    "PassportNumber": 212954
+    "PassSeries": 6311,
+    "PassNumber": 212954
   },
   {
     "Accounts": [
@@ -131,8 +131,8 @@
     "PhoneNumbers": [
       "79483821209"
     ],
-    "PassportSeries": 7182,
-    "PassportNumber": 725671
+    "PassSeries": 7182,
+    "PassNumber": 725671
   },
   {
     "Accounts": [
@@ -147,8 +147,8 @@
     "PhoneNumbers": [
       "79915079730"
     ],
-    "PassportSeries": 6541,
-    "PassportNumber": 512560
+    "PassSeries": 6541,
+    "PassNumber": 512560
   },
   {
     "Accounts": [
@@ -163,8 +163,8 @@
     "PhoneNumbers": [
       "79892577621"
     ],
-    "PassportSeries": 6321,
-    "PassportNumber": 272086
+    "PassSeries": 6321,
+    "PassNumber": 272086
   },
   {
     "Accounts": [
@@ -179,7 +179,7 @@
     "PhoneNumbers": [
       "79114670315"
     ],
-    "PassportSeries": 3611,
-    "PassportNumber": 641487
+    "PassSeries": 3611,
+    "PassNumber": 641487
   }
 ]

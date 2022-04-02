@@ -1,12 +1,12 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.ObjectModel;
+using System;
 using System.IO;
-using System.Linq;
 using System.Text;
+using System.Linq;
+using System.Collections.Generic;
 using Bank_StashYourCrap.Bank.PeopleModels.Base;
 using Bank_StashYourCrap.Bank.PeopleModels.Clients;
 using Bank_StashYourCrap.Bank.PeopleModels.Employees;
-using System;
 
 namespace Bank_StashYourCrap.Bank.DataContext
 {
@@ -62,7 +62,7 @@ namespace Bank_StashYourCrap.Bank.DataContext
             }
         }
 
-        internal ObservableCollection<TMan>? GetCollectionPeople<TMan>() where TMan : Human
+        internal List<TMan>? GetCollectionPeople<TMan>() where TMan : Human
         {
             DefineFileForWritingAndReading<TMan>();
 
@@ -73,12 +73,12 @@ namespace Bank_StashYourCrap.Bank.DataContext
             CheckingAndCreatingDirectories(_pathDirectoryData);
             CheckingAndCreatingFile(fileFullPath);
 
-            ObservableCollection<TMan>? people = null;
+            List<TMan>? people = null;
             using (StreamReader sr = new StreamReader(fileFullPath, Encoding.UTF8))
             {
                 var AllLine = sr.ReadToEnd();
 
-                people = JsonConvert.DeserializeObject<ObservableCollection<TMan>>(AllLine);
+                people = JsonConvert.DeserializeObject<List<TMan>>(AllLine);
             }
 
             return people;
@@ -95,7 +95,7 @@ namespace Bank_StashYourCrap.Bank.DataContext
             return oneMan;
         }
 
-        internal void AddOneMan<TMan>(TMan? newMan) where TMan : Human
+        internal void AddMan<TMan>(TMan? newMan) where TMan : Human
         {
             var people = GetCollectionPeople<TMan>();
             if (newMan == null || people == null)
@@ -153,7 +153,7 @@ namespace Bank_StashYourCrap.Bank.DataContext
             }
         }
 
-        private void SaveData<TMan>(ObservableCollection<TMan> people) where TMan : Human
+        private void SaveData<TMan>(List<TMan> people) where TMan : Human
         {
             // _pathGenericFile меняется в зависимости от того, когой тип будет использоваться в TMan.
             // _pathDirectoryData не меняется, устанавливается в конструкторе
