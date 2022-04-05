@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Bank_StashYourCrap.Localizations
 {
-    internal class RusLang : Localization
+    internal class RusLang : AppLocalization
     {
         public override Dictionary<int, string> StringLibrary { get; }
 
@@ -35,15 +35,15 @@ namespace Bank_StashYourCrap.Localizations
                 { 21, "Номер паспорта" },
                 { 22, "Номера телефонов" },
                 { 23, "Счета клиента" },
-                { 24, "" },
-                { 25, "" },
-                { 26, "" },
-                { 27, "" },
+                { 24, "Консультант" },
+                { 25, "Менеджер" },
+                { 26, "Окно регистрации пользователя" },
+                { 27, "Войти" },
                 { 28, "" },
                 { 29, "" },
                 { 30, "" },
                 { 31, "" },
-                { 32, "" },
+                { 32, "Если ты не можешь взять весь свой крэп с собой, ты знаешь куда можно обратиться..." },
                 { 33, "Бюджетный счёт" },
                 { 34, "Счет в иностранной валюте" },
                 { 35, "Счёт заморожен" },

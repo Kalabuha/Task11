@@ -1,11 +1,11 @@
 ﻿namespace Bank_StashYourCrap.Views.Windows
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ShowBillboardWindow.xaml
     /// </summary>
-    public partial class MainWindow
+    public partial class ShowBillboardWindow
     {
-        public MainWindow()
+        public ShowBillboardWindow()
         {
             InitializeComponent();
         }

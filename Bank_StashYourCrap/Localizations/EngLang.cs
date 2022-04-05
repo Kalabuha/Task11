@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Bank_StashYourCrap.Localizations
 {
-    internal class EngLang : Localization
+    internal class EngLang : AppLocalization
     {
         public override Dictionary<int, string> StringLibrary { get; }
 

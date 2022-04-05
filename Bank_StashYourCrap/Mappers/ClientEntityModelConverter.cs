@@ -10,9 +10,9 @@ namespace Bank_StashYourCrap.Mappers
 {
     internal static class ClientEntityModelConverter
     {
-        static public Localization _localization = default!;
+        static public AppLocalization _localization = default!;
 
-        public static void SetLocalization(Localization localization)
+        public static void SetLocalization(AppLocalization localization)
         {
             if (localization == null)
             {
@@ -40,12 +40,12 @@ namespace Bank_StashYourCrap.Mappers
             return clientModel;
         }
 
-        private static ObservableCollection<Type> ConvertListToObservableCollection<Type>(this List<Type> list)
+        private static ObservableCollection<Type> ConvertListToObservableCollection<Type>(this ICollection<Type> list)
         {
             return new ObservableCollection<Type>(list);
         }
 
-        private static ObservableCollection<BankAccountModel> ConvertAccountEntityToModel(this List<BankAccount> accountsEntities)
+        private static ObservableCollection<BankAccountModel> ConvertAccountEntityToModel(this ICollection<BankAccount> accountsEntities)
         {
             var accountsModels = new ObservableCollection<BankAccountModel>();
 
@@ -111,12 +111,12 @@ namespace Bank_StashYourCrap.Mappers
             return clientEntity;
         }
 
-        private static List<Type> ConvertObservableCollectionToList<Type>(this ObservableCollection<Type> obsCollection)
+        private static List<Type> ConvertObservableCollectionToList<Type>(this ICollection<Type> obsCollection)
         {
             return new List<Type>(obsCollection);
         }
 
-        private static List<BankAccount> ConvertAccountModelToEntity(this ObservableCollection<BankAccountModel> accountsModels)
+        private static List<BankAccount> ConvertAccountModelToEntity(this ICollection<BankAccountModel> accountsModels)
         {
             var accountsEntities = new List<BankAccount>();
 

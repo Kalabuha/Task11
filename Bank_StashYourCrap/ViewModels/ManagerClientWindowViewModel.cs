@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bank_StashYourCrap.Mappers
+namespace Bank_StashYourCrap.ViewModels
 {
-    internal class EmployeeEntityModel
+    internal class ManagerClientWindowViewModel
     {
     }
 }

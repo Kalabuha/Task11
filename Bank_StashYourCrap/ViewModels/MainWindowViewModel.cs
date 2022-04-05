@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Bank_StashYourCrap.Views.Windows;
 using Bank_StashYourCrap.Localizations;
 using Bank_StashYourCrap.Localizations.Base;
 using Bank_StashYourCrap.ViewModels.Base;
@@ -15,35 +16,38 @@ using Bank_StashYourCrap.Mappers;
 using Bank_StashYourCrap.Bank.PeopleModels.Employees;
 using Bank_StashYourCrap.Bank.PeopleModels.Clients;
 using Bank_StashYourCrap.Commands;
+using System.Windows;
 
 namespace Bank_StashYourCrap.ViewModels
 {
-    internal class MainWindiwViewModel : BaseViewModel
+    internal class MainWindowViewModel : BaseViewModel
     {
         private readonly ServiceClientsData _clientsService;
         private readonly ServiceEmployeesData _employeesService;
 
-        public Localization Localization { get; private set; }
+        public AppLocalization Localization { get; private set; } = default!;
 
-        public MainWindiwViewModel()
+        public MainWindowViewModel()
         {
             var repository = new RepositoryPeopleData();
             _clientsService = new ServiceClientsData(repository);
             _employeesService = new ServiceEmployeesData(repository);
 
             SetupLocalization();
-
-            Clients = _clientsService.GetAllClients();
-
-            Title = Localization!.StringLibrary[0];
+            StartApplicationConfiguration();
             UserRegistrationChecks();
-
             СonstructAllCommands();
+        }
+
+        private void StartApplicationConfiguration()
+        {
+            Title = Localization!.StringLibrary[0];
         }
 
         private void SetupLocalization()
         {
             Localization = new RusLang();
+            EmployeeEntityModelConverter.SetLocalization(Localization);
             ClientEntityModelConverter.SetLocalization(Localization);
         }
 
@@ -57,8 +61,15 @@ namespace Bank_StashYourCrap.ViewModels
 
             DeleteClientCommand = new ActionCommand(
                 execute: OnExecuteDeleteClientCommand, can: CanExecuteDeleteClientCommand);
+
+            CallRegistrationWindowCommand = new ActionCommand(
+                execute: OnExecuteCallRegistrationWindowCommand, can: CanExecuteCallRegistrationWindowCommand);
+
+            ShowBillboardWindowCommand = new ActionCommand(
+                execute: OnExecuteShowBillboardWindowCommand, can: CanExecuteShowBillboardWindowCommand);
         }
 
+        // Свойства
         #region Свойство заглавие окна
         private string _title = default!;
         public string Title
@@ -78,7 +89,7 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Свойство пользователь, который вошёл в систему
-        private EmployeeModel? _registeredUser = null!;
+        private EmployeeModel? _registeredUser;
         public EmployeeModel? RegisteredUser
         {
             get => _registeredUser;
@@ -99,7 +110,11 @@ namespace Bank_StashYourCrap.ViewModels
         public ObservableCollection<ClientModel>? Clients { get; set; }
         #endregion
 
+        #region Свойство окно регистрации работника
+        private RegistrationEmployeeWindow? _RegistrationEmployeeWindow { get; set; }
+        #endregion
 
+        // Команды
         #region Команда создать нового клиента
         public ICommand CrateNewClientCommand { get; private set; } = default!;
 
@@ -110,6 +125,10 @@ namespace Bank_StashYourCrap.ViewModels
 
         private bool CanExecuteCrateNewClientCommand(object parameter)
         {
+            if (RegisteredUser == null)
+            {
+                return false;
+            }
             return true;
         }
         #endregion
@@ -124,6 +143,10 @@ namespace Bank_StashYourCrap.ViewModels
 
         private bool CanExecuteEditClientCommand(object parameter)
         {
+            if (RegisteredUser == null)
+            {
+                return false;
+            }
             return true;
         }
         #endregion
@@ -138,11 +161,73 @@ namespace Bank_StashYourCrap.ViewModels
 
         private bool CanExecuteDeleteClientCommand(object parameter)
         {
-            if (true)
+            if (RegisteredUser == null)
             {
-
+                return false;
             }
             return true;
+        }
+        #endregion
+
+        #region Команда найти клиента по номеру и серии паспорта
+        public ICommand SearchClientByPassport { get; private set; } = default!;
+
+        private void OnExecuteSearchClientByPassportCommand(object parameter)
+        {
+
+        }
+
+        private bool CanExecuteSearchClientByPassportCommand(object parameter)
+        {
+            return true;
+        }
+        #endregion
+
+        #region Команда вызвать окно информации о программе
+        public ICommand ShowBillboardWindowCommand { get; private set; } = default!;
+
+        private void OnExecuteShowBillboardWindowCommand(object parameter)
+        {
+            var billboardWindow = new ShowBillboardWindow()
+            {
+                Owner = Application.Current.MainWindow,
+            };
+
+            billboardWindow.Title = Localization.StringLibrary[32];
+            billboardWindow.ShowDialog();
+        }
+
+        private bool CanExecuteShowBillboardWindowCommand(object parameter)
+        {
+            return true;
+        }
+        #endregion
+
+        #region Команда вызвать окно регистрации пользователя системы
+        public ICommand CallRegistrationWindowCommand { get; private set; } = default!;
+
+        private void OnExecuteCallRegistrationWindowCommand(object parameter)
+        {
+            var registrationWindow = new RegistrationEmployeeWindow()
+            {
+                Owner = Application.Current.MainWindow,
+            };
+            _RegistrationEmployeeWindow = registrationWindow;
+
+            registrationWindow.Title = Localization.StringLibrary[26];
+            registrationWindow.Closed += OnWindowClosed!;
+            registrationWindow.ShowDialog();
+        }
+
+        private bool CanExecuteCallRegistrationWindowCommand(object parameter)
+        {
+            return _RegistrationEmployeeWindow == null;
+        }
+
+        private void OnWindowClosed(object sender, EventArgs e)
+        {
+            ((Window)sender).Closed -= OnWindowClosed!;
+            _RegistrationEmployeeWindow = null;
         }
         #endregion
 

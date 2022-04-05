@@ -1,0 +1,68 @@
+﻿<Window x:Class="Bank_StashYourCrap.Views.Windows.RegistrationEmployeeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Bank_StashYourCrap.ViewModels"
+        Height="300" Width="500">
+    <Window.DataContext>
+        <vm:RegistrationEmployeeWindowViewModel/>
+    </Window.DataContext>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ComboBox Grid.Column="1"
+                  Grid.Row="1"
+                  Grid.ColumnSpan="5"
+                  ItemsSource="{Binding Employees}"
+                  SelectedItem="{Binding SelectedUser}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Name}" Margin="0,0,5,0"/>
+                        <TextBlock Text="{Binding Surname}" Margin="0,0,5,0"/>
+                        <TextBlock Text="{Binding Patronymic}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <TextBlock Grid.Column="1"
+                   Grid.Row="3"
+                   Grid.ColumnSpan="5"
+                   Text="{Binding SelectedUser.AccessLevel}"/>
+
+        <ListView Grid.Column="1"
+                  Grid.Row="5"
+                  Grid.ColumnSpan="5"
+                  Grid.RowSpan="2"
+                  ItemsSource="{Binding SelectedUser.PhoneNumbers}">
+        </ListView>
+
+        <Button Grid.Column="2"
+                Grid.Row="8"
+                Grid.ColumnSpan="3"
+                Content="{Binding Localization.StringLibrary[27]}"
+                Command="{Binding ConfirmEmployeeCommand}"/>
+    </Grid>
+</Window>

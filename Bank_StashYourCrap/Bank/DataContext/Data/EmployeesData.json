@@ -7,8 +7,8 @@
     "PhoneNumbers": [
       "79932664440"
     ],
-    "PassportSeries": 6345,
-    "PassportNumber": 826083
+    "PassSeries": 6345,
+    "PassNumber": 826083
   },
   {
     "AccessLevel": 2,
@@ -18,8 +18,8 @@
     "PhoneNumbers": [
       "79070021910"
     ],
-    "PassportSeries": 7943,
-    "PassportNumber": 829508
+    "PassSeries": 7943,
+    "PassNumber": 829508
   },
   {
     "AccessLevel": 1,
@@ -29,8 +29,8 @@
     "PhoneNumbers": [
       "79293328178"
     ],
-    "PassportSeries": 5812,
-    "PassportNumber": 891627
+    "PassSeries": 5812,
+    "PassNumber": 891627
   },
   {
     "AccessLevel": 1,
@@ -40,7 +40,7 @@
     "PhoneNumbers": [
       "79392282424"
     ],
-    "PassportSeries": 1147,
-    "PassportNumber": 350989
+    "PassSeries": 1147,
+    "PassNumber": 350989
   }
 ]
