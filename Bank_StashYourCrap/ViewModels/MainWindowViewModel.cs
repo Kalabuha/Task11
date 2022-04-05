@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Bank_StashYourCrap.Views.Windows;
@@ -16,7 +17,6 @@ using Bank_StashYourCrap.Mappers;
 using Bank_StashYourCrap.Bank.PeopleModels.Employees;
 using Bank_StashYourCrap.Bank.PeopleModels.Clients;
 using Bank_StashYourCrap.Commands;
-using System.Windows;
 
 namespace Bank_StashYourCrap.ViewModels
 {

@@ -38,11 +38,11 @@
                   SelectedItem="{Binding SelectedUser}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Name}" Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding Surname}" Margin="0,0,5,0"/>
+                    <TextBlock>
+                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Text="{Binding Surname}"/>
                         <TextBlock Text="{Binding Patronymic}"/>
-                    </StackPanel>
+                    </TextBlock>
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
@@ -63,6 +63,7 @@
                 Grid.Row="8"
                 Grid.ColumnSpan="3"
                 Content="{Binding Localization.StringLibrary[27]}"
-                Command="{Binding ConfirmEmployeeCommand}"/>
+                Command="{Binding ConfirmEmployeeCommand}"
+                CommandParameter="{Binding ElementName=RegistrationEmployeeWindow}"/>
     </Grid>
 </Window>
