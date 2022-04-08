@@ -16,12 +16,16 @@
             <MenuItem Header="{Binding Localization.StringLibrary[1]}">
                 <MenuItem Header="{Binding Localization.StringLibrary[2]}" Command="{Binding ShowBillboardWindowCommand}"/>
                 <Separator/>
-                <MenuItem Header="{Binding Localization.StringLibrary[3]}"/>
+                <MenuItem Header="{Binding Localization.StringLibrary[3]}">
+                    <MenuItem Header="{Binding Localization.StringLibrary[28]}"/>
+                    <Separator/>
+                    <MenuItem Header="{Binding Localization.StringLibrary[29]}"/>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="{Binding Localization.StringLibrary[4]}">
                 <MenuItem Header="{Binding Localization.StringLibrary[5]}" Command="{Binding CallRegistrationWindowCommand}"/>
                 <Separator/>
-                <MenuItem Header="{Binding Localization.StringLibrary[6]}"/>
+                <MenuItem Header="{Binding Localization.StringLibrary[6]}" Command="{Binding UnRegistrationCommand}"/>
             </MenuItem>
         </Menu>
 
@@ -50,8 +54,8 @@
                 </Grid.ColumnDefinitions>
 
                 <!--Search controllers-->
-                <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding Localization.StringLibrary[7]}"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Localization.StringLibrary[8]}"/>
+                <TextBox Grid.Row="0" Grid.Column="0"/>
+                <TextBox Grid.Row="0" Grid.Column="1"/>
                 <Button Grid.Row="0" Grid.Column="2" Content="{Binding Localization.StringLibrary[9]}"
                         Command="{Binding SearchClientByPassport}"/>
 

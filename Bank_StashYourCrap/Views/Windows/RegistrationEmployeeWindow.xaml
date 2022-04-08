@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Bank_StashYourCrap.ViewModels"
         Height="300" Width="500">
-    <Window.DataContext>
+    <!--<Window.DataContext>
         <vm:RegistrationEmployeeWindowViewModel/>
-    </Window.DataContext>
+    </Window.DataContext>-->
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -64,6 +64,6 @@
                 Grid.ColumnSpan="3"
                 Content="{Binding Localization.StringLibrary[27]}"
                 Command="{Binding ConfirmEmployeeCommand}"
-                CommandParameter="{Binding ElementName=RegistrationEmployeeWindow}"/>
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
     </Grid>
 </Window>

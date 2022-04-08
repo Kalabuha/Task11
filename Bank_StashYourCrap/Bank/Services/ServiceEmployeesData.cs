@@ -28,5 +28,12 @@ namespace Bank_StashYourCrap.Bank.Services
 
             return new ObservableCollection<EmployeeModel>(allClientsModels);
         }
+
+        public Employee GetEmployee(EmployeeModel employeeModel)
+        {
+            var passSeries = int.Parse(employeeModel.PassSeries);
+            var passNumber = int.Parse(employeeModel.PassNumber);
+            return _repository.GetOneMan<Employee>(passSeries, passNumber)!;
+        }
     }
 }

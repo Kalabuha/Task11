@@ -31,8 +31,8 @@ namespace Bank_StashYourCrap.Mappers
                 Name = clientEntity.Name,
                 Surname = clientEntity.Surname,
                 Patronymic = clientEntity.Patronymic,
-                PassSeries = clientEntity.PassSeries,
-                PassNumber = clientEntity.PassNumber,
+                PassSeries = clientEntity.PassSeries.ToString(),
+                PassNumber = clientEntity.PassNumber.ToString(),
                 PhoneNumbers = clientEntity.PhoneNumbers.ConvertListToObservableCollection<string>(),
                 Accounts = clientEntity.Accounts.ConvertAccountEntityToModel(),
             };
@@ -64,32 +64,32 @@ namespace Bank_StashYourCrap.Mappers
                 NumberAccount = entity.NumberAccount,
                 TypeAccount = ConvertTypeAccountToString(entity.TypeAccount)
             };
+        }
 
-            string ConvertTypeAccountToString(TA typeAccount)
+        public static string ConvertTypeAccountToString(TA typeAccount)
+        {
+            if (_localization == null)
             {
-                if (_localization == null)
-                {
-                    throw new Exception("Не указана локализация для конвертора.");
-                }
+                throw new Exception("Не указана локализация для конвертора.");
+            }
 
-                var dictionary = _localization.StringLibrary;
-                switch (typeAccount)
-                {
-                    case TA.Budget: return dictionary[33];
+            var dictionary = _localization.StringLibrary;
+            switch (typeAccount)
+            {
+                case TA.Budget: return dictionary[33];
 
-                    case TA.ForeignCurrency: return dictionary[34];
+                case TA.ForeignCurrency: return dictionary[34];
 
-                    case TA.Frozen: return dictionary[35];
+                case TA.Frozen: return dictionary[35];
 
-                    case TA.Savings: return dictionary[36];
+                case TA.Savings: return dictionary[36];
 
-                    case TA.Correspondent: return dictionary[37];
+                case TA.Correspondent: return dictionary[37];
 
-                    case TA.Insured: return dictionary[38];
+                case TA.Insured: return dictionary[38];
 
-                    default:
-                        throw new NotImplementedException("Тип счёта не известен.");
-                }
+                default:
+                    throw new NotImplementedException("Тип счёта не известен.");
             }
         }
         #endregion
@@ -102,8 +102,8 @@ namespace Bank_StashYourCrap.Mappers
                 Name = clientModel.Name,
                 Surname = clientModel.Surname,
                 Patronymic = clientModel.Patronymic,
-                PassSeries = clientModel.PassSeries,
-                PassNumber = clientModel.PassNumber,
+                PassSeries = int.Parse(clientModel.PassSeries),
+                PassNumber = int.Parse(clientModel.PassNumber),
                 PhoneNumbers = clientModel.PhoneNumbers.ConvertObservableCollectionToList<string>(),
                 Accounts = clientModel.Accounts.ConvertAccountModelToEntity()
             };
@@ -135,36 +135,36 @@ namespace Bank_StashYourCrap.Mappers
                 NumberAccount = model.NumberAccount,
                 TypeAccount = ConvertStringToTypeAccount(model.TypeAccount)
             };
+        }
 
-            TA ConvertStringToTypeAccount(string typeAccount)
+        public static TA ConvertStringToTypeAccount(string typeAccount)
+        {
+            if (_localization == null)
             {
-                if (_localization == null)
-                {
-                    throw new Exception("Не указана локализация для конвертора.");
-                }
-
-                var dictionary = _localization.StringLibrary;
-                if (typeAccount == dictionary[33])
-                    return TA.Budget;
-
-                else if (typeAccount == dictionary[34])
-                    return TA.ForeignCurrency;
-
-                else if (typeAccount == dictionary[35])
-                    return TA.Frozen;
-
-                else if (typeAccount == dictionary[36])
-                    return TA.Savings;
-
-                else if (typeAccount == dictionary[37])
-                    return TA.Correspondent;
-
-                else if (typeAccount == dictionary[38])
-                    return TA.Insured;
-
-                else
-                    throw new NotImplementedException("Тип счёта не известен.");
+                throw new Exception("Не указана локализация для конвертора.");
             }
+
+            var dictionary = _localization.StringLibrary;
+            if (typeAccount == dictionary[33])
+                return TA.Budget;
+
+            else if (typeAccount == dictionary[34])
+                return TA.ForeignCurrency;
+
+            else if (typeAccount == dictionary[35])
+                return TA.Frozen;
+
+            else if (typeAccount == dictionary[36])
+                return TA.Savings;
+
+            else if (typeAccount == dictionary[37])
+                return TA.Correspondent;
+
+            else if (typeAccount == dictionary[38])
+                return TA.Insured;
+
+            else
+                throw new NotImplementedException("Тип счёта не известен.");
         }
         #endregion
     }

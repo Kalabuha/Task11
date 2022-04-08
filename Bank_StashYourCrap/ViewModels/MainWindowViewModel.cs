@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Bank_StashYourCrap.Views.Windows;
+﻿using Bank_StashYourCrap.Bank.DataContext;
+using Bank_StashYourCrap.Bank.PeopleModels.Employees;
+using Bank_StashYourCrap.Bank.PeopleModels.Employees.Base;
+using Bank_StashYourCrap.Bank.Services;
+using Bank_StashYourCrap.Commands;
 using Bank_StashYourCrap.Localizations;
 using Bank_StashYourCrap.Localizations.Base;
-using Bank_StashYourCrap.ViewModels.Base;
-using Bank_StashYourCrap.Bank.Services;
-using Bank_StashYourCrap.Bank.DataContext;
-using Bank_StashYourCrap.Models;
 using Bank_StashYourCrap.Mappers;
-using Bank_StashYourCrap.Bank.PeopleModels.Employees;
-using Bank_StashYourCrap.Bank.PeopleModels.Clients;
-using Bank_StashYourCrap.Commands;
+using Bank_StashYourCrap.Models;
+using Bank_StashYourCrap.ViewModels.Base;
+using Bank_StashYourCrap.Views.Windows;
+using System;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Bank_StashYourCrap.ViewModels
 {
@@ -30,13 +26,14 @@ namespace Bank_StashYourCrap.ViewModels
         public MainWindowViewModel()
         {
             var repository = new RepositoryPeopleData();
+
             _clientsService = new ServiceClientsData(repository);
             _employeesService = new ServiceEmployeesData(repository);
 
             SetupLocalization();
             StartApplicationConfiguration();
             UserRegistrationChecks();
-            СonstructAllCommands();
+            CreateAllCommands();
         }
 
         private void StartApplicationConfiguration()
@@ -51,23 +48,39 @@ namespace Bank_StashYourCrap.ViewModels
             ClientEntityModelConverter.SetLocalization(Localization);
         }
 
-        private void СonstructAllCommands()
+        private void CreateAllCommands()
         {
             CrateNewClientCommand = new ActionCommand(
-                execute: OnExecuteCrateNewClientCommand, can: CanExecuteCrateNewClientCommand);
+                OnExecuteCallCreateClientManagerWindowCommand, CanExecuteCallCreateClientManagerWindowCommand);
 
             EditClientCommand = new ActionCommand(
-                execute: OnExecuteEditClientCommand, can: CanExecuteEditClientCommand);
+                OnExecuteEditClientCommand, CanExecuteEditClientCommand);
 
             DeleteClientCommand = new ActionCommand(
-                execute: OnExecuteDeleteClientCommand, can: CanExecuteDeleteClientCommand);
+                OnExecuteDeleteClientCommand, CanExecuteDeleteClientCommand);
 
             CallRegistrationWindowCommand = new ActionCommand(
-                execute: OnExecuteCallRegistrationWindowCommand, can: CanExecuteCallRegistrationWindowCommand);
+                OnExecuteCallRegistrationWindowCommand, CanExecuteCallRegistrationWindowCommand);
 
             ShowBillboardWindowCommand = new ActionCommand(
-                execute: OnExecuteShowBillboardWindowCommand, can: CanExecuteShowBillboardWindowCommand);
+                OnExecuteShowBillboardWindowCommand, CanExecuteShowBillboardWindowCommand);
+
+            UnRegistrationCommand = new ActionCommand(
+                OnExecuteUnRegistrationCommand, CanExecuteUnRegistrationCommand);
         }
+
+        private void UserRegistrationChecks()
+        {
+            if (RegisteredUser == null)
+            {
+                Status = Localization.StringLibrary[13];
+            }
+            else
+            {
+                Status = Localization.StringLibrary[14] + " " + $"{RegisteredUser?.Name}";
+            }
+        }
+
 
         // Свойства
         #region Свойство заглавие окна
@@ -89,8 +102,8 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Свойство пользователь, который вошёл в систему
-        private EmployeeModel? _registeredUser;
-        public EmployeeModel? RegisteredUser
+        private Employee? _registeredUser;
+        public Employee? RegisteredUser
         {
             get => _registeredUser;
             set => Set(ref _registeredUser, value);
@@ -107,67 +120,143 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Свойство коллекция всех клиентов
-        public ObservableCollection<ClientModel>? Clients { get; set; }
+        private ObservableCollection<ClientModel>? _clients;
+
+        public ObservableCollection<ClientModel>? Clients
+        {
+            get => _clients;
+            set => Set(ref _clients, value);
+        }
         #endregion
 
-        #region Свойство окно регистрации работника
-        private RegistrationEmployeeWindow? _RegistrationEmployeeWindow { get; set; }
+        #region Свойства окно регистрации работника
+        private RegistrationEmployeeWindow? RegistrationEmployeeWindow { get; set; }
+        private RegistrationEmployeeWindowViewModel? RegistrationEmployeeWindowViewModel { get; set; }
         #endregion
+
+        #region Свойства окна менеджера клиента
+        private ManagerClientWindow? ManagerClientWindow { get; set; }
+        private ManagerClientWindowViewModel? ManagerClientWindowViewModel { get; set; }
+        #endregion
+
 
         // Команды
-        #region Команда создать нового клиента
+        #region Команда открыть окно для создания нового клиента
         public ICommand CrateNewClientCommand { get; private set; } = default!;
 
-        private void OnExecuteCrateNewClientCommand(object parameter)
+        private void OnExecuteCallCreateClientManagerWindowCommand(object parameter)
         {
+            var managmentClientWindow = new ManagerClientWindow()
+            {
+                Owner = Application.Current.MainWindow,
+            };
+            ManagerClientWindow = managmentClientWindow;
+            managmentClientWindow.Closed += OnManagerClientWindowClosed!;
 
+            var newClient = new ClientModel
+            {
+                Name = "",
+                Surname = "",
+                Patronymic = "",
+                PassSeries = "",
+                PassNumber = "",
+                PhoneNumbers = new ObservableCollection<string>(),
+                Accounts = new ObservableCollection<BankAccountModel>()
+            };
+
+            var managerClientWindowViewModel = new ManagerClientWindowViewModel(_clientsService, Localization, newClient);
+            ManagerClientWindowViewModel = managerClientWindowViewModel;
+            managerClientWindowViewModel.AddAction += _clientsService.AddClient;
+            managerClientWindowViewModel.Status = Localization.StringLibrary[30];
+            managmentClientWindow.DataContext = ManagerClientWindowViewModel;
+            managmentClientWindow.ShowDialog();
         }
 
-        private bool CanExecuteCrateNewClientCommand(object parameter)
+        private bool CanExecuteCallCreateClientManagerWindowCommand(object parameter)
         {
-            if (RegisteredUser == null)
+            if (RegisteredUser != null && RegisteredUser.AccessLevel == EmployeeAccessLevel.Manager)
             {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
         #endregion
 
-        #region Команда изменить выбранного клиента
+        #region Команда открыть окно для изменения выбранного клиента
         public ICommand EditClientCommand { get; private set; } = default!;
 
         private void OnExecuteEditClientCommand(object parameter)
         {
+            var managmentClientWindow = new ManagerClientWindow()
+            {
+                Owner = Application.Current.MainWindow,
+            };
+            ManagerClientWindow = managmentClientWindow;
+            managmentClientWindow.Closed += OnManagerClientWindowClosed!;
 
+            var managerClientWindowViewModel = new ManagerClientWindowViewModel(_clientsService, Localization, SelectedClient!);
+            ManagerClientWindowViewModel = managerClientWindowViewModel;
+            managerClientWindowViewModel.UpdateAction += _clientsService.EditClient;
+            managerClientWindowViewModel.Status = Localization.StringLibrary[55];
+            managmentClientWindow.DataContext = ManagerClientWindowViewModel;
+            managmentClientWindow.ShowDialog();
         }
 
         private bool CanExecuteEditClientCommand(object parameter)
         {
-            if (RegisteredUser == null)
+            if (RegisteredUser != null &&
+                RegisteredUser.AccessLevel == EmployeeAccessLevel.Manager &&
+                SelectedClient != null)
             {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
         #endregion
 
-        #region Команда удалить выбранного клиента
+        #region Команда открыть окно для удаления выбранного клиента
         public ICommand DeleteClientCommand { get; private set; } = default!;
 
         private void OnExecuteDeleteClientCommand(object parameter)
         {
+            var managmentClientWindow = new ManagerClientWindow()
+            {
+                Owner = Application.Current.MainWindow,
+            };
+            ManagerClientWindow = managmentClientWindow;
+            managmentClientWindow.Closed += OnManagerClientWindowClosed!;
 
+            var managerClientWindowViewModel = new ManagerClientWindowViewModel(_clientsService, Localization, SelectedClient!);
+            ManagerClientWindowViewModel = managerClientWindowViewModel;
+            managerClientWindowViewModel.DeleteAction += _clientsService.DeleteClient;
+            managerClientWindowViewModel.Status = Localization.StringLibrary[56];
+            managmentClientWindow.DataContext = ManagerClientWindowViewModel;
+            managmentClientWindow.ShowDialog();
         }
 
         private bool CanExecuteDeleteClientCommand(object parameter)
         {
-            if (RegisteredUser == null)
+            if (RegisteredUser != null &&
+                RegisteredUser.AccessLevel == EmployeeAccessLevel.Manager &&
+                SelectedClient != null)
             {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
         #endregion
+
+        private void OnManagerClientWindowClosed(object sender, EventArgs e)
+        {
+            ((Window)sender).Closed -= OnManagerClientWindowClosed!;
+            RegisteredUser = RegistrationEmployeeWindowViewModel?.ConfirmUser;
+            if (RegisteredUser != null)
+            {
+                Clients = _clientsService.GetAllClients(RegisteredUser);
+                UserRegistrationChecks();
+            }
+            RegistrationEmployeeWindow = null;
+        }
 
         #region Команда найти клиента по номеру и серии паспорта
         public ICommand SearchClientByPassport { get; private set; } = default!;
@@ -193,7 +282,7 @@ namespace Bank_StashYourCrap.ViewModels
                 Owner = Application.Current.MainWindow,
             };
 
-            billboardWindow.Title = Localization.StringLibrary[32];
+            billboardWindow.Title = Localization.StringLibrary[39];
             billboardWindow.ShowDialog();
         }
 
@@ -212,40 +301,51 @@ namespace Bank_StashYourCrap.ViewModels
             {
                 Owner = Application.Current.MainWindow,
             };
-            _RegistrationEmployeeWindow = registrationWindow;
+            RegistrationEmployeeWindow = registrationWindow;
 
             registrationWindow.Title = Localization.StringLibrary[26];
-            registrationWindow.Closed += OnWindowClosed!;
+            registrationWindow.Closed += OnRegistrationWindowClosed!;
+
+            var registrationWindowViewModel = new RegistrationEmployeeWindowViewModel(_employeesService);
+            registrationWindowViewModel.Localization = Localization;
+            RegistrationEmployeeWindowViewModel = registrationWindowViewModel;
+            registrationWindow.DataContext = registrationWindowViewModel;
             registrationWindow.ShowDialog();
         }
 
         private bool CanExecuteCallRegistrationWindowCommand(object parameter)
         {
-            return _RegistrationEmployeeWindow == null;
+            return RegisteredUser == null;
         }
 
-        private void OnWindowClosed(object sender, EventArgs e)
+        private void OnRegistrationWindowClosed(object sender, EventArgs e)
         {
-            ((Window)sender).Closed -= OnWindowClosed!;
-            _RegistrationEmployeeWindow = null;
+            ((Window)sender).Closed -= OnRegistrationWindowClosed!;
+            RegisteredUser = RegistrationEmployeeWindowViewModel?.ConfirmUser;
+            if (RegisteredUser != null)
+            {
+                Clients = _clientsService.GetAllClients(RegisteredUser);
+                UserRegistrationChecks();
+            }
+            RegistrationEmployeeWindow = null;
         }
         #endregion
 
-        private void UserRegistrationChecks()
-        {
-            var user = RegisteredUser;
+        #region Команда выйти из системы
+        public ICommand UnRegistrationCommand { get; private set; } = default!;
 
-            if (user == null)
-            {
-                Status = Localization.StringLibrary[13];
-            }
-            else
-            {
-                Status = Localization.StringLibrary[13] + $"{RegisteredUser?.Name}";
-            }
+        private void OnExecuteUnRegistrationCommand(object parameter)
+        {
+            RegisteredUser = null;
+            Clients = null;
+            UserRegistrationChecks();
         }
 
-
+        private bool CanExecuteUnRegistrationCommand(object parameter)
+        {
+            return RegisteredUser != null;
+        }
+        #endregion
     }
 
 

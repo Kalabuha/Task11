@@ -31,8 +31,8 @@ namespace Bank_StashYourCrap.Mappers
                 Name = employeeEntity.Name,
                 Surname = employeeEntity.Surname,
                 Patronymic = employeeEntity.Patronymic,
-                PassSeries = employeeEntity.PassSeries,
-                PassNumber = employeeEntity.PassNumber,
+                PassSeries = employeeEntity.PassSeries.ToString(),
+                PassNumber = employeeEntity.PassNumber.ToString(),
                 PhoneNumbers = employeeEntity.PhoneNumbers.ConvertListToObservableCollection<string>(),
                 AccessLevel = employeeEntity.AccessLevel.ConvertAccessLevelEntityToModel()
             };
