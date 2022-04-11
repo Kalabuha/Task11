@@ -317,13 +317,13 @@ namespace Bank_StashYourCrap.ViewModels
         public ICommand AddBankAccountCommand { get; set; } = default!;
         private void OnExecuteAddBankAccountCommand(object parameter)
         {
-            if (!_serviceDataVerification.IsValidNumberAccount(AccountNumberTextBox))
+            if (!_serviceDataVerification.IsValidNumber(AccountNumberTextBox, numberOfDigits: 14))
             {
                 AccountNumberLabel = Localization.StringLibrary[45];
                 return;
             }
 
-            if (BankAccountsListBox.Select(a => a.NumberAccount.ToString()).Contains(AccountNumberTextBox))
+            if (BankAccountsListBox.Select(a => a.NumberAccount.ToString()).Contains(AccountNumberTextBox.Trim()))
             {
                 AccountNumberLabel = Localization.StringLibrary[46];
                 return;
@@ -372,51 +372,9 @@ namespace Bank_StashYourCrap.ViewModels
         public ICommand CUDActionCommand { get; set; } = default!;
         private void OnExecuteCUDActionCommand(object parameter)
         {
-            bool IsValid = true;
-            if (!_serviceDataVerification.IsValidName(NameTextBox))
-            {
-                IsValid = false;
-                NameLabel = Localization.StringLibrary[47];
-            }
-            else NameLabel = "";
-            if (!_serviceDataVerification.IsValidName(SurnameTextBox))
-            {
-                IsValid = false;
-                SurnameLabel = Localization.StringLibrary[48];
-            }
-            else SurnameLabel = "";
-            if (!_serviceDataVerification.IsValidName(PatronymicTextBox))
-            {
-                IsValid = false;
-                PatronymicLabel = Localization.StringLibrary[49];
-            }
-            else PatronymicLabel = "";
-            if (!_serviceDataVerification.IsValidPassSeries(PassSeriesTextBox))
-            {
-                IsValid = false;
-                PassSeriesLabel = Localization.StringLibrary[50];
-            }
-            else PassSeriesLabel = "";
-            if (!_serviceDataVerification.IsValidPassNumber(_passNumberTextBox))
-            {
-                IsValid = false;
-                PassNumberLabel = Localization.StringLibrary[51];
-            }
-            else PassNumberLabel = "";
-            if (!PhoneNumbersListBox.Any())
-            {
-                IsValid = false;
-                PhoneNumberLabel = Localization.StringLibrary[52];
-            }
-            else PhoneNumberLabel = "";
-            if (!BankAccountsListBox.Any())
-            {
-                AccountNumberLabel = Localization.StringLibrary[53];
-                IsValid = false;
-            }
-            else AccountNumberLabel = "";
+            bool IsValidAllData = CheckValidityAllData();
 
-            if (IsValid)
+            if (IsValidAllData)
             {
                 var newClient = CreateClientModel();
                 // Здесь выполняется основное действие для окна.
@@ -453,6 +411,55 @@ namespace Bank_StashYourCrap.ViewModels
         }
         #endregion
 
+        private bool CheckValidityAllData()
+        {
+            bool IsValidAllData = true;
+            if (!_serviceDataVerification.IsValidName(NameTextBox))
+            {
+                IsValidAllData = false;
+                NameLabel = Localization.StringLibrary[47];
+            }
+            else NameLabel = "";
+            if (!_serviceDataVerification.IsValidName(SurnameTextBox))
+            {
+                IsValidAllData = false;
+                SurnameLabel = Localization.StringLibrary[48];
+            }
+            else SurnameLabel = "";
+            if (!_serviceDataVerification.IsValidName(PatronymicTextBox))
+            {
+                IsValidAllData = false;
+                PatronymicLabel = Localization.StringLibrary[49];
+            }
+            else PatronymicLabel = "";
+            if (!_serviceDataVerification.IsValidNumber(PassSeriesTextBox, numberOfDigits: 4))
+            {
+                IsValidAllData = false;
+                PassSeriesLabel = Localization.StringLibrary[50];
+            }
+            else PassSeriesLabel = "";
+            if (!_serviceDataVerification.IsValidNumber(_passNumberTextBox, numberOfDigits: 6))
+            {
+                IsValidAllData = false;
+                PassNumberLabel = Localization.StringLibrary[51];
+            }
+            else PassNumberLabel = "";
+            if (!PhoneNumbersListBox.Any())
+            {
+                IsValidAllData = false;
+                PhoneNumberLabel = Localization.StringLibrary[52];
+            }
+            else PhoneNumberLabel = "";
+            if (!BankAccountsListBox.Any())
+            {
+                AccountNumberLabel = Localization.StringLibrary[53];
+                IsValidAllData = false;
+            }
+            else AccountNumberLabel = "";
+
+            return IsValidAllData;
+        }
+
         private void ReadClientModel()
         {
             if (SelectedClient == null)
@@ -460,11 +467,11 @@ namespace Bank_StashYourCrap.ViewModels
                 throw new Exception("Ввыбранный клиент потерялся по дороге. Выполнять действия над ним невозможно.");
             }
 
-            NameTextBox = SelectedClient.Name;
-            SurnameTextBox = SelectedClient.Surname;
-            PatronymicTextBox = SelectedClient.Patronymic;
-            PassSeriesTextBox = SelectedClient.PassSeries;
-            PassNumberTextBox = SelectedClient.PassNumber;
+            NameTextBox = new string(SelectedClient.Name);
+            SurnameTextBox = new string(SelectedClient.Surname);
+            PatronymicTextBox = new string(SelectedClient.Patronymic);
+            PassSeriesTextBox = new string(SelectedClient.PassSeries);
+            PassNumberTextBox = new string(SelectedClient.PassNumber);
             PhoneNumbersListBox = new ObservableCollection<string>(SelectedClient.PhoneNumbers);
             BankAccountsListBox = new ObservableCollection<BankAccountModel>(SelectedClient.Accounts);
         }

@@ -191,10 +191,6 @@
       {
         "TypeAccount": 5,
         "NumberAccount": 47652121354578
-      },
-      {
-        "TypeAccount": 1,
-        "NumberAccount": 76157684212523
       }
     ],
     "Name": "Wilhelm",
@@ -202,26 +198,9 @@
     "Patronymic": "Enforcer",
     "PhoneNumbers": [
       "793353657452",
-      "793309283524",
       "793311262507"
     ],
     "PassSeries": 1285,
     "PassNumber": 124776
-  },
-  {
-    "Accounts": [
-      {
-        "TypeAccount": 0,
-        "NumberAccount": 22222222222222
-      }
-    ],
-    "Name": "Чувак",
-    "Surname": "Чуваков",
-    "Patronymic": "Чувакович",
-    "PhoneNumbers": [
-      "22222222222"
-    ],
-    "PassSeries": 1255,
-    "PassNumber": 125799
   }
 ]

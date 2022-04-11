@@ -17,9 +17,9 @@
                 <MenuItem Header="{Binding Localization.StringLibrary[2]}" Command="{Binding ShowBillboardWindowCommand}"/>
                 <Separator/>
                 <MenuItem Header="{Binding Localization.StringLibrary[3]}">
-                    <MenuItem Header="{Binding Localization.StringLibrary[28]}"/>
+                    <MenuItem Header="{Binding Localization.StringLibrary[28]}" Command="{Binding SetupRussianLanguageCommand}"/>
                     <Separator/>
-                    <MenuItem Header="{Binding Localization.StringLibrary[29]}"/>
+                    <MenuItem Header="{Binding Localization.StringLibrary[29]}" Command="{Binding SetupEnglishLanguageCommand}"/>
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="{Binding Localization.StringLibrary[4]}">
@@ -84,21 +84,62 @@
             <GroupBox Grid.Column="1" Header="{Binding SelectedClient.Name}">
                 <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.1*"/>
+                        <ColumnDefinition Width="0.4*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Column="1" Grid.Row="1" Margin="0,7,0,0" Text="{Binding Localization.StringLibrary[17]}"/>
+                    <TextBlock Grid.Column="1" Grid.Row="2" Margin="0,7,0,0" Text="{Binding Localization.StringLibrary[18]}"/>
+                    <TextBlock Grid.Column="1" Grid.Row="3" Margin="0,7,0,0" Text="{Binding Localization.StringLibrary[19]}"/>
+                    <TextBlock Grid.Column="1" Grid.Row="4" Margin="0,7,0,0" Text="{Binding Localization.StringLibrary[20]}"/>
+                    <TextBlock Grid.Column="1" Grid.Row="5" Margin="0,7,0,0" Text="{Binding Localization.StringLibrary[21]}"/>
+                    <TextBlock Grid.Column="1" Grid.Row="6" Margin="0,7,0,0" Text="{Binding Localization.StringLibrary[22]}"/>
+                    <TextBlock Grid.Column="1" Grid.Row="7" Margin="0,7,0,0" Text="{Binding Localization.StringLibrary[23]}"/>
+
+                    <TextBlock Grid.Column="2" Grid.Row="1" Margin="0,7,0,0" Text="{Binding SelectedClient.Name}"/>
+                    <TextBlock Grid.Column="2" Grid.Row="2" Margin="0,7,0,0" Text="{Binding SelectedClient.Surname}"/>
+                    <TextBlock Grid.Column="2" Grid.Row="3" Margin="0,7,0,0" Text="{Binding SelectedClient.Patronymic}"/>
+                    <TextBlock Grid.Column="2" Grid.Row="4" Margin="0,7,0,0" Text="{Binding SelectedClient.PassSeries}"/>
+                    <TextBlock Grid.Column="2" Grid.Row="5" Margin="0,7,0,0" Text="{Binding SelectedClient.PassNumber}"/>
+                    <ListBox Grid.Column="2" Grid.Row="6" Margin="0,4,0,0" MaxWidth="300" HorizontalAlignment="Left" ItemsSource="{Binding SelectedClient.PhoneNumbers}">
+                        
+                    </ListBox>
+                    <ListBox Grid.Column="2" Grid.Row="7" Margin="0,4,0,0" MaxWidth="300" HorizontalAlignment="Left" ItemsSource="{Binding SelectedClient.Accounts}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <TextBlock Text="{Binding TypeAccount}"/>
+                                    <TextBlock Text="{Binding NumberAccount}"/>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+                
+                
+                
+                <!--<Grid>
+                    <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0">
-                        <TextBlock Text="{Binding Localization.StringLibrary[17]}"/>
-                        <TextBlock Text="{Binding Localization.StringLibrary[18]}"/>
-                        <TextBlock Text="{Binding Localization.StringLibrary[19]}"/>
-                        <TextBlock Text="{Binding Localization.StringLibrary[20]}"/>
-                        <TextBlock Text="{Binding Localization.StringLibrary[21]}"/>
-                        <TextBlock Text="{Binding Localization.StringLibrary[22]}"/>
-                        <TextBlock Text="{Binding Localization.StringLibrary[23]}"/>
+                        
                     </StackPanel>
 
-                    <StackPanel Grid.Column="1" DataContext="{Binding SelectedClient}">
+                    <StackPanel Grid.Column="1" >
                         <TextBlock Text="{Binding Name}"/>
                         <TextBlock Text="{Binding Surname}"/>
                         <TextBlock Text="{Binding Patronymic}"/>
@@ -111,7 +152,7 @@
                             
                         </ListView>
                     </StackPanel>
-                </Grid>
+                </Grid>-->
             </GroupBox>
             
         </Grid>

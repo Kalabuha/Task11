@@ -43,12 +43,12 @@
                 
                 <!--Имя-->
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Localization.StringLibrary[17]}"/>
-                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding NameTextBox}"/>
+                <TextBox Grid.Column="1" Grid.Row="0" IsReadOnly="False" Text="{Binding NameTextBox}"/>
                 <Label Grid.Column="1" Grid.Row="1" Content="{Binding NameLabel}"/>
                 
                 <!--Фамилия-->
                 <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding Localization.StringLibrary[18]}"/>
-                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding SurnameTextBox}"/>
+                <TextBox Grid.Column="1" Grid.Row="2" IsReadOnly="False" Text="{Binding SurnameTextBox}"/>
                 <Label Grid.Column="1" Grid.Row="3" Content="{Binding SurnameLabel}"/>
                 
                 <!--Отчество-->

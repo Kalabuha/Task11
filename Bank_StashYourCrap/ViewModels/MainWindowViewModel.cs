@@ -21,8 +21,7 @@ namespace Bank_StashYourCrap.ViewModels
         private readonly ServiceClientsData _clientsService;
         private readonly ServiceEmployeesData _employeesService;
 
-        public AppLocalization Localization { get; private set; } = default!;
-
+        
         public MainWindowViewModel()
         {
             var repository = new RepositoryPeopleData();
@@ -30,22 +29,32 @@ namespace Bank_StashYourCrap.ViewModels
             _clientsService = new ServiceClientsData(repository);
             _employeesService = new ServiceEmployeesData(repository);
 
-            SetupLocalization();
-            StartApplicationConfiguration();
+            SetupApplicationConfiguration();
             UserRegistrationChecks();
             CreateAllCommands();
         }
 
-        private void StartApplicationConfiguration()
+        private void SetupApplicationConfiguration()
         {
+            SetupRussianLocalization();
+            SetupLocalization();
             Title = Localization!.StringLibrary[0];
         }
 
         private void SetupLocalization()
         {
-            Localization = new RusLang();
             EmployeeEntityModelConverter.SetLocalization(Localization);
             ClientEntityModelConverter.SetLocalization(Localization);
+        }
+
+        private void SetupRussianLocalization()
+        {
+            Localization = new RusLang();
+        }
+
+        private void SetupEnglishLocalization()
+        {
+            Localization = new EngLang();
         }
 
         private void CreateAllCommands()
@@ -67,6 +76,12 @@ namespace Bank_StashYourCrap.ViewModels
 
             UnRegistrationCommand = new ActionCommand(
                 OnExecuteUnRegistrationCommand, CanExecuteUnRegistrationCommand);
+
+            SetupRussianLanguageCommand = new ActionCommand(
+                OnExecuteSetupRussianLanguageCommand, CanExecuteSetupRussianLanguageCommand);
+
+            SetupEnglishLanguageCommand = new ActionCommand(
+                OnExecuteSetupEnglishLanguageCommand, CanExecuteSetupEnglishLanguageCommand);
         }
 
         private void UserRegistrationChecks()
@@ -81,8 +96,16 @@ namespace Bank_StashYourCrap.ViewModels
             }
         }
 
-
         // Свойства
+        #region Свойство локализация языка
+        private AppLocalization _localization = default!;
+        public AppLocalization Localization
+        {
+            get => _localization;
+            set => Set(ref _localization, value);
+        }
+        #endregion
+
         #region Свойство заглавие окна
         private string _title = default!;
         public string Title
@@ -140,7 +163,7 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
 
-        // Команды
+        // Команды CUD
         #region Команда открыть окно для создания нового клиента
         public ICommand CrateNewClientCommand { get; private set; } = default!;
 
@@ -253,11 +276,16 @@ namespace Bank_StashYourCrap.ViewModels
             if (RegisteredUser != null)
             {
                 Clients = _clientsService.GetAllClients(RegisteredUser);
-                UserRegistrationChecks();
             }
+            else
+            {
+                Clients = null;
+            }
+            UserRegistrationChecks();
             RegistrationEmployeeWindow = null;
         }
 
+        // Прочие команды
         #region Команда найти клиента по номеру и серии паспорта
         public ICommand SearchClientByPassport { get; private set; } = default!;
 
@@ -344,6 +372,44 @@ namespace Bank_StashYourCrap.ViewModels
         private bool CanExecuteUnRegistrationCommand(object parameter)
         {
             return RegisteredUser != null;
+        }
+        #endregion
+
+        #region Команда установить русский язык
+        public ICommand SetupRussianLanguageCommand { get; private set; } = default!;
+
+        private void OnExecuteSetupRussianLanguageCommand(object parameter)
+        {
+            SetupRussianLocalization();
+            UserRegistrationChecks();
+        }
+
+        private bool CanExecuteSetupRussianLanguageCommand(object parameter)
+        {
+            if (Localization is EngLang)
+            {
+                return true;
+            }
+            return false;
+        }
+        #endregion
+
+        #region Команда установить английский язык
+        public ICommand SetupEnglishLanguageCommand { get; private set; } = default!;
+
+        private void OnExecuteSetupEnglishLanguageCommand(object parameter)
+        {
+            SetupEnglishLocalization();
+            UserRegistrationChecks();
+        }
+
+        private bool CanExecuteSetupEnglishLanguageCommand(object parameter)
+        {
+            if (Localization is RusLang)
+            {
+                return true;
+            }
+            return false;
         }
         #endregion
     }

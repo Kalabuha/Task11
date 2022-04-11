@@ -26,36 +26,20 @@
             return true;
         }
 
-        public bool IsValidPassSeries(string passSeries)
+        public bool IsValidNumber(string number, byte numberOfDigits)
         {
-            if (IsNullOrWhiteSpaceOrEmpty(passSeries))
+            if (IsNullOrWhiteSpaceOrEmpty(number))
             {
                 return false;
             }
 
-            passSeries = passSeries.Trim();
-            if (passSeries.Length != 4)
+            number = number.Trim();
+            if (number.Length != numberOfDigits)
             {
                 return false;
             }
 
-            return IsValidNumber(passSeries);
-        }
-
-        public bool IsValidPassNumber(string passNumber)
-        {
-            if (IsNullOrWhiteSpaceOrEmpty(passNumber))
-            {
-                return false;
-            }
-
-            passNumber = passNumber.Trim();
-            if (passNumber.Length != 6)
-            {
-                return false;
-            }
-
-            return IsValidNumber(passNumber);
+            return IsValidNumber(number);
         }
 
         public bool IsValidPhoneNumber(string phoneNumber)
@@ -72,22 +56,6 @@
             }
 
             return IsValidNumber(phoneNumber);
-        }
-
-        public bool IsValidNumberAccount(string numberAccount)
-        {
-            if (IsNullOrWhiteSpaceOrEmpty(numberAccount))
-            {
-                return false;
-            }
-
-            numberAccount = numberAccount.Trim();
-            if (numberAccount.Length != 14)
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private bool IsValidNumber(string number)
