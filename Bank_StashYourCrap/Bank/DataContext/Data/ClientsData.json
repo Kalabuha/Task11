@@ -97,7 +97,7 @@
     "Surname": "Ovejas",
     "Patronymic": "Gunzerker",
     "PhoneNumbers": [
-      "79607297739"
+      "789124568870"
     ],
     "PassSeries": 1127,
     "PassNumber": 924712
@@ -123,6 +123,10 @@
       {
         "TypeAccount": 0,
         "NumberAccount": 62614252227817
+      },
+      {
+        "TypeAccount": 2,
+        "NumberAccount": 56465445765844
       }
     ],
     "Name": "Mike",

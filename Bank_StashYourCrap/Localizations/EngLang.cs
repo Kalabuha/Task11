@@ -38,7 +38,7 @@ namespace Bank_StashYourCrap.Localizations
                 { 24, "Consultant" },
                 { 25, "Manager" },
                 { 26, "User registration window" },
-                { 27, "Come in" },
+                { 27, "" },
                 { 28, "Русский язык" },
                 { 29, "English language" },
                 { 30, "Add new client" },

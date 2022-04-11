@@ -6,6 +6,9 @@
         xmlns:vm="clr-namespace:Bank_StashYourCrap.ViewModels"
         
         Title="{Binding Localization.StringLibrary[40]}" Height="650" Width="570">
+    <!--<Window.DataContext>
+        <vm:ManagerClientWindowViewModel/>
+    </Window.DataContext>-->
     
     <DockPanel>
         <ToolBar DockPanel.Dock="Top">
@@ -43,27 +46,27 @@
                 
                 <!--Имя-->
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Localization.StringLibrary[17]}"/>
-                <TextBox Grid.Column="1" Grid.Row="0" IsReadOnly="False" Text="{Binding NameTextBox}"/>
+                <TextBox Grid.Column="1" Grid.Row="0" IsReadOnly="{Binding IsReadOnlyNameTextBox}" Text="{Binding NameTextBox}"/>
                 <Label Grid.Column="1" Grid.Row="1" Content="{Binding NameLabel}"/>
                 
                 <!--Фамилия-->
                 <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding Localization.StringLibrary[18]}"/>
-                <TextBox Grid.Column="1" Grid.Row="2" IsReadOnly="False" Text="{Binding SurnameTextBox}"/>
+                <TextBox Grid.Column="1" Grid.Row="2" IsReadOnly="{Binding IsReadOnlySurnameTextBox}" Text="{Binding SurnameTextBox}"/>
                 <Label Grid.Column="1" Grid.Row="3" Content="{Binding SurnameLabel}"/>
                 
                 <!--Отчество-->
                 <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding Localization.StringLibrary[19]}"/>
-                <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding PatronymicTextBox}"/>
+                <TextBox Grid.Column="1" Grid.Row="4" IsReadOnly="{Binding IsReadOnlyPatronymicTextBox}" Text="{Binding PatronymicTextBox}"/>
                 <Label Grid.Column="1" Grid.Row="5" Content="{Binding PatronymicLabel}"/>
 
                 <!--Серия паспорта-->
                 <TextBlock Grid.Column="0" Grid.Row="6" Text="{Binding Localization.StringLibrary[20]}"/>
-                <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding PassSeriesTextBox}"/>
+                <TextBox Visibility="{Binding VisibilityTextBoxes}" Grid.Column="1" Grid.Row="6" IsReadOnly="{Binding IsReadOnlyPassSeriesTextBox}" Text="{Binding PassSeriesTextBox}"/>
                 <Label Grid.Column="1" Grid.Row="7" Content="{Binding PassSeriesLabel}"/>
                 
                 <!--Номер паспорта-->
                 <TextBlock Grid.Column="0" Grid.Row="8" Text="{Binding Localization.StringLibrary[21]}"/>
-                <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding PassNumberTextBox}"/>
+                <TextBox Visibility="{Binding VisibilityTextBoxes}" Grid.Column="1" Grid.Row="8" IsReadOnly="{Binding IsReadOnlyPassNumberTextBox}" Text="{Binding PassNumberTextBox}"/>
                 <Label Grid.Column="1" Grid.Row="9" Content="{Binding PassNumberLabel}"/>
 
                 <!--Телефоны-->
@@ -75,10 +78,10 @@
                             <ColumnDefinition Width="70"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition MinHeight="28"/>
+                            <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <TextBox Grid.Column="0" Grid.Row="0" Text="{Binding PhoneNumberTextBox, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Grid.Column="0" Grid.Row="0" IsReadOnly="{Binding IsReadOnlyPhoneNumberTextBox}" Text="{Binding PhoneNumberTextBox, UpdateSourceTrigger=PropertyChanged}" />
                         <Button Grid.Column="1" Grid.Row="0" Content="{Binding Localization.StringLibrary[10]}" Command="{Binding AddPhoneNumberCommand}"/>
                         <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Content="{Binding PhoneNumberLabel}"/>
                     </Grid>
@@ -115,10 +118,10 @@
                             <RowDefinition/>
                             <RowDefinition MinHeight="28"/>
                         </Grid.RowDefinitions>
-                        <ComboBox Grid.Column="0" Grid.Row="0" Margin="0,0,15,0" ItemsSource="{Binding AllTypesAccount}" SelectedItem="{Binding AccountTypeComboBoxSelected}">
+                        <ComboBox Grid.Column="0" Grid.Row="0" Margin="0,0,15,0" IsEnabled="{Binding IsEnableAccountTypeComboBoxSelected}" ItemsSource="{Binding AllTypesAccount}" SelectedItem="{Binding AccountTypeComboBoxSelected}">
                         </ComboBox>
                         <Button Grid.Column="1" Grid.Row="0" Content="{Binding Localization.StringLibrary[10]}" Command="{Binding AddBankAccountCommand}"/>
-                        <TextBox Grid.Column="0" Grid.Row="1" Text="{Binding AccountNumberTextBox, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,15,0"/>
+                        <TextBox Grid.Column="0" Grid.Row="1" IsReadOnly="{Binding IsReadOnlyAccountNumberTextBox}" Text="{Binding AccountNumberTextBox, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,15,0"/>
                         <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Content="{Binding AccountNumberLabel}"/>
                     </Grid>
 

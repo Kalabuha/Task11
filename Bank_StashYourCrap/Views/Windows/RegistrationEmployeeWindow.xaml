@@ -62,7 +62,7 @@
         <Button Grid.Column="2"
                 Grid.Row="8"
                 Grid.ColumnSpan="3"
-                Content="{Binding Localization.StringLibrary[27]}"
+                Content="{Binding Localization.StringLibrary[5]}"
                 Command="{Binding ConfirmEmployeeCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
     </Grid>

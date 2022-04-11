@@ -16,10 +16,15 @@ namespace Bank_StashYourCrap.ViewModels
         private readonly ServiceClientsData _serviceClientsData;
         private readonly ServiceDataVerification _serviceDataVerification;
 
-        // Основные события для данного окна. Два из них должны быть null
-        public event Func<ClientModel, bool> AddAction = default!;
-        public event Action<ClientModel> UpdateAction = default!;
-        public event Action<ClientModel> DeleteAction = default!;
+        // Основные события для данного окна. Два из них должны быть null. Булевые поля для простоты проверки.
+        public event Func<ClientModel, bool>? AddAction;
+        public bool isAddActionHandlerAttached = false;
+
+        public event Action<ClientModel>? UpdateAction;
+        public bool isUpdateActionHandlerAttached = false;
+
+        public event Action<ClientModel>? DeleteAction;
+        public bool isDeleteActionHandlerAttached = false;
 
         public AppLocalization Localization { get; }
 
@@ -37,7 +42,11 @@ namespace Bank_StashYourCrap.ViewModels
             _serviceDataVerification = new ServiceDataVerification();
 
             AllTypesAccount = _serviceClientsData.GetAllTypesAccount();
+            CreateAllCommands();
+        }
 
+        private void CreateAllCommands()
+        {
             AddPhoneNumberCommand = new ActionCommand(
                 OnExecuteAddPhoneNumberCommand, CanExecuteAddPhoneNumberCommand);
 
@@ -56,7 +65,6 @@ namespace Bank_StashYourCrap.ViewModels
             CUDActionCancelCommand = new ActionCommand(
                 OnExecuteCUDActionCancelCommand, CanExecuteCUDActionCancelCommand);
         }
-
         #region Свойство статус окна
         private string _status = default!;
         public string Status
@@ -74,6 +82,7 @@ namespace Bank_StashYourCrap.ViewModels
             get => _nameTextBox;
             set => Set(ref _nameTextBox, value);
         }
+        public bool IsReadOnlyNameTextBox { get; set; } = true;
         #endregion
 
         #region Свойство фамилия клиента
@@ -83,6 +92,7 @@ namespace Bank_StashYourCrap.ViewModels
             get => _surnameTextBox;
             set => Set(ref _surnameTextBox, value);
         }
+        public bool IsReadOnlySurnameTextBox { get; set; } = true;
         #endregion
 
         #region Свойство отчество клиента
@@ -92,6 +102,7 @@ namespace Bank_StashYourCrap.ViewModels
             get => _patronymicTextBox;
             set => Set(ref _patronymicTextBox, value);
         }
+        public bool IsReadOnlyPatronymicTextBox { get; set; } = true;
         #endregion
 
         #region Свойство серия паспорта клиента
@@ -101,6 +112,7 @@ namespace Bank_StashYourCrap.ViewModels
             get => _passSeriesTextBox;
             set => Set(ref _passSeriesTextBox, value);
         }
+        public bool IsReadOnlyPassSeriesTextBox { get; set; } = true;
         #endregion
 
         #region Свойство номер паспорта клиента
@@ -110,6 +122,7 @@ namespace Bank_StashYourCrap.ViewModels
             get => _passNumberTextBox;
             set => Set(ref _passNumberTextBox, value);
         }
+        public bool IsReadOnlyPassNumberTextBox { get; set; } = true;
         #endregion
 
         #region Свойство номер телефона клиента
@@ -119,6 +132,7 @@ namespace Bank_StashYourCrap.ViewModels
             get => _phoneNumberTextBox;
             set => Set(ref _phoneNumberTextBox, value);
         }
+        public bool IsReadOnlyPhoneNumberTextBox { get; set; } = true;
         #endregion
 
         #region Свойство номер счёта клиента
@@ -128,6 +142,7 @@ namespace Bank_StashYourCrap.ViewModels
             get => _accountNumberTextBox;
             set => Set(ref _accountNumberTextBox, value);
         }
+        public bool IsReadOnlyAccountNumberTextBox { get; set; } = true;
         #endregion
 
         #region Свойство коллекция телефонных номеров клиента
@@ -158,6 +173,7 @@ namespace Bank_StashYourCrap.ViewModels
             get => _accountTypeComboBoxSelected;
             set => Set(ref _accountTypeComboBoxSelected, value);
         }
+        public bool IsEnableAccountTypeComboBoxSelected { get; set; } = false;
         #endregion
 
         #region Свойство выбранный номер телефона клиента из списка
@@ -265,9 +281,13 @@ namespace Bank_StashYourCrap.ViewModels
         }
         #endregion
 
+        #region Свойство видимость текстблоков. Используется, если нужно скрыть какие-нибудь текстблоки
+        public Visibility VisibilityTextBoxes { get; set; } = Visibility.Visible;
+        #endregion
+
         // Команды
         #region Команда добавить номер телефона в коллекцию номеров клиента
-        public ICommand AddPhoneNumberCommand { get; set; }
+        public ICommand AddPhoneNumberCommand { get; private set; }
         private void OnExecuteAddPhoneNumberCommand(object parameter)
         {
             if (!_serviceDataVerification.IsValidPhoneNumber(PhoneNumberTextBox))
@@ -287,7 +307,7 @@ namespace Bank_StashYourCrap.ViewModels
 
         private bool CanExecuteAddPhoneNumberCommand(object parameter)
         {
-            if (PhoneNumberTextBox == null)
+            if (PhoneNumberTextBox == null && IsReadOnlyPhoneNumberTextBox)
             {
                 return false;
             }
@@ -296,7 +316,7 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Команда удалить выбранный номер телефона из коллекции номеров клиента
-        public ICommand RemovePhoneNumberCommand { get; set; }
+        public ICommand RemovePhoneNumberCommand { get; private set; }
         private void OnExecuteRemovePhoneNumberCommand(object parameter)
         {
             PhoneNumbersListBox.Remove(PhoneNumberListBoxSelected!);
@@ -305,7 +325,7 @@ namespace Bank_StashYourCrap.ViewModels
 
         private bool CanExecuteRemovePhoneNumberCommand(object parameter)
         {
-            if (PhoneNumberListBoxSelected == null || PhoneNumbersListBox.Count == 0)
+            if (PhoneNumberListBoxSelected == null || PhoneNumbersListBox.Count == 0 || IsReadOnlyPhoneNumberTextBox)
             {
                 return false;
             }
@@ -314,7 +334,7 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Команда добавить банковский счёт в коллекцию счетов клиента
-        public ICommand AddBankAccountCommand { get; set; } = default!;
+        public ICommand AddBankAccountCommand { get; private set; } = default!;
         private void OnExecuteAddBankAccountCommand(object parameter)
         {
             if (!_serviceDataVerification.IsValidNumber(AccountNumberTextBox, numberOfDigits: 14))
@@ -339,7 +359,7 @@ namespace Bank_StashYourCrap.ViewModels
 
         private bool CanExecuteAddBankAccountCommand(object parameter)
         {
-            if (AccountTypeComboBoxSelected == null || AccountNumberTextBox == null)
+            if ((AccountTypeComboBoxSelected == null || AccountNumberTextBox == null) && IsReadOnlyAccountNumberTextBox)
             {
                 return false;
             }
@@ -348,17 +368,16 @@ namespace Bank_StashYourCrap.ViewModels
         #endregion
 
         #region Команда удалить выбранный банковский счёт из коллекции счетов клиента
-        public ICommand RemoveAccountCommand { get; set; }
+        public ICommand RemoveAccountCommand { get; private set; }
         private void OnExecuteRemoveAccountCommand(object parameter)
         {
-            var tt = AccountListBoxSelected;
             BankAccountsListBox.Remove(AccountListBoxSelected!);
             AccountListBoxSelected = null;
         }
 
         private bool CanExecuteRemoveAccountCommand(object parameter)
         {
-            if (AccountListBoxSelected == null || BankAccountsListBox.Count == 0)
+            if (AccountListBoxSelected == null || BankAccountsListBox.Count == 0 || IsReadOnlyAccountNumberTextBox)
             {
                 return false;
             }
@@ -369,7 +388,7 @@ namespace Bank_StashYourCrap.ViewModels
         // Основные кнопки
         #region Команда подтвердить выбранное действие (добавить, изменить или удалить клиента)
         // Create, Update, Delete - CUD
-        public ICommand CUDActionCommand { get; set; } = default!;
+        public ICommand CUDActionCommand { get; private set; } = default!;
         private void OnExecuteCUDActionCommand(object parameter)
         {
             bool IsValidAllData = CheckValidityAllData();
@@ -399,7 +418,7 @@ namespace Bank_StashYourCrap.ViewModels
 
         #region Команда отменить выбранное действие (сбрасывает изменения данных). Не закрывает окно.
         // Create, Update, Delete - CUD
-        public ICommand CUDActionCancelCommand { get; set; } = default!;
+        public ICommand CUDActionCancelCommand { get; private set; } = default!;
         private void OnExecuteCUDActionCancelCommand(object parameter)
         {
             ReadClientModel();
@@ -407,6 +426,10 @@ namespace Bank_StashYourCrap.ViewModels
 
         private bool CanExecuteCUDActionCancelCommand(object parameter)
         {
+            if (isDeleteActionHandlerAttached)
+            {
+                return false;
+            }
             return true;
         }
         #endregion

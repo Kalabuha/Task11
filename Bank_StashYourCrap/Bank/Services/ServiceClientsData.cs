@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using Bank_StashYourCrap.Bank.BankModels;
 using Bank_StashYourCrap.Bank.DataContext;
 using Bank_StashYourCrap.Bank.PeopleModels.Clients;
 using Bank_StashYourCrap.Bank.PeopleModels.Employees;
-using Bank_StashYourCrap.Bank.PeopleModels.Employees.Base;
 using Bank_StashYourCrap.Mappers;
 using Bank_StashYourCrap.Models;
-using Bank_StashYourCrap.Bank.Services.Modifiers;
-using Bank_StashYourCrap.Bank.BankModels;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Bank_StashYourCrap.Bank.Services
 {
     internal class ServiceClientsData
     {
         private readonly RepositoryPeopleData _repository;
-        private readonly ConfidentialDataHider _dataHider;
 
         public ServiceClientsData(RepositoryPeopleData repository)
         {
             _repository = repository;
-            _dataHider = new ConfidentialDataHider();
         }
 
         // Проверка коллекции данных на совподения
@@ -61,23 +57,7 @@ namespace Bank_StashYourCrap.Bank.Services
             return allTypesAccountAsString;
         }
 
-        public ObservableCollection<ClientModel> GetAllClients(Employee userSystem)
-        {
-            if (userSystem.AccessLevel == EmployeeAccessLevel.Consultant)
-            {
-                return GetAllClientsHiddenData();
-            }
-            else if (userSystem.AccessLevel == EmployeeAccessLevel.Manager)
-            {
-                return GetAllClientsOpenData();
-            }
-            else
-            {
-                throw new Exception("Не известный уровень доступа");
-            }
-        }
-
-        private ObservableCollection<ClientModel> GetAllClientsOpenData()
+        public ObservableCollection<ClientModel> GetAllClients()
         {
             var allClientsEntities = _repository.GetCollectionPeople<Client>() ?? new List<Client>();
 
@@ -86,40 +66,30 @@ namespace Bank_StashYourCrap.Bank.Services
             return new ObservableCollection<ClientModel>(allClientsModels);
         }
 
-        private ObservableCollection<ClientModel> GetAllClientsHiddenData()
-        {
-            var allClientsEntities = _repository.GetCollectionPeople<Client>() ?? new List<Client>();
-
-            var allClientsModels = allClientsEntities.Select(c => _dataHider.HideData(c.ConvertEntityToModel()));
-
-            return new ObservableCollection<ClientModel>(allClientsModels);
-        }
-
         public bool AddClient(ClientModel newClientModel)
         {
-            var passSeries = int.Parse(newClientModel.PassSeries);
-            var passNumber = int.Parse(newClientModel.PassNumber);
-            var clientEntity = _repository.GetOneMan<Client>(passSeries, passNumber);
+            var newClientEntity = newClientModel.ConvertModelToEntity();
 
-            // Если будет получен результат отличный от null, добовлять нельзя.
+            var clientEntity = _repository.GetOneMan<Client>(newClientEntity.PassSeries, newClientEntity.PassNumber);
+
+            // Если будет получен результат отличный от null, добавлять нельзя.
             if (clientEntity != null)
             {
                 return false;
             }
 
-            _repository.AddMan(newClientModel.ConvertModelToEntity());
+            _repository.AddMan(newClientEntity);
             return true;
         }
 
         public void EditClient(ClientModel editClientModel)
         {
-            // Если разрешить изменение паспорта, то здесь необходимо сделать проверку на совподения.
             _repository.EditMan(editClientModel.ConvertModelToEntity());
         }
 
         public void DeleteClient(ClientModel deleteClientModel)
         {
-            // Это же банковское приложение. Тут можно сделать запрет удаления должников банка :)
+            // Это же банковское приложение. Тут нужно сделать запрет удаления должников банка :)
             _repository.DeleteMan(deleteClientModel.ConvertModelToEntity());
         }
 

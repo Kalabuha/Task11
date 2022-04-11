@@ -92,7 +92,7 @@ namespace Bank_StashYourCrap.ViewModels
             }
             else
             {
-                Status = Localization.StringLibrary[14] + " " + $"{RegisteredUser?.Name}";
+                Status = Localization.StringLibrary[14] + " " + $"{RegisteredUser.Name}";
             }
         }
 
@@ -162,6 +162,14 @@ namespace Bank_StashYourCrap.ViewModels
         private ManagerClientWindowViewModel? ManagerClientWindowViewModel { get; set; }
         #endregion
 
+        #region Свойство видимость текстблоков. Используется, если нужно скрыть какие-нибудь текстблоки
+        private Visibility _visibilityTextBoxes = Visibility.Visible;
+        public Visibility VisibilityTextBoxes
+        {
+            get => _visibilityTextBoxes;
+            set => Set(ref _visibilityTextBoxes, value);
+        }
+        #endregion
 
         // Команды CUD
         #region Команда открыть окно для создания нового клиента
@@ -174,29 +182,34 @@ namespace Bank_StashYourCrap.ViewModels
                 Owner = Application.Current.MainWindow,
             };
             ManagerClientWindow = managmentClientWindow;
-            managmentClientWindow.Closed += OnManagerClientWindowClosed!;
+            managmentClientWindow.Closed += OnDialogWindowClosed!;
 
             var newClient = new ClientModel
             {
-                Name = "",
-                Surname = "",
-                Patronymic = "",
-                PassSeries = "",
-                PassNumber = "",
+                Name = string.Empty,
+                Surname = string.Empty,
+                Patronymic = string.Empty,
+                PassSeries = string.Empty,
+                PassNumber = string.Empty,
                 PhoneNumbers = new ObservableCollection<string>(),
                 Accounts = new ObservableCollection<BankAccountModel>()
             };
 
             var managerClientWindowViewModel = new ManagerClientWindowViewModel(_clientsService, Localization, newClient);
             ManagerClientWindowViewModel = managerClientWindowViewModel;
+
             managerClientWindowViewModel.AddAction += _clientsService.AddClient;
+            managerClientWindowViewModel.isAddActionHandlerAttached = true;
+
             managerClientWindowViewModel.Status = Localization.StringLibrary[30];
+            SetDataEditingRights(managerClientWindowViewModel);
             managmentClientWindow.DataContext = ManagerClientWindowViewModel;
             managmentClientWindow.ShowDialog();
         }
 
         private bool CanExecuteCallCreateClientManagerWindowCommand(object parameter)
         {
+            // Только менеджер может создавать нового клиента
             if (RegisteredUser != null && RegisteredUser.AccessLevel == EmployeeAccessLevel.Manager)
             {
                 return true;
@@ -215,21 +228,24 @@ namespace Bank_StashYourCrap.ViewModels
                 Owner = Application.Current.MainWindow,
             };
             ManagerClientWindow = managmentClientWindow;
-            managmentClientWindow.Closed += OnManagerClientWindowClosed!;
+            managmentClientWindow.Closed += OnDialogWindowClosed!;
 
             var managerClientWindowViewModel = new ManagerClientWindowViewModel(_clientsService, Localization, SelectedClient!);
             ManagerClientWindowViewModel = managerClientWindowViewModel;
+
             managerClientWindowViewModel.UpdateAction += _clientsService.EditClient;
+            managerClientWindowViewModel.isUpdateActionHandlerAttached = true;
+
             managerClientWindowViewModel.Status = Localization.StringLibrary[55];
+            SetDataEditingRights(managerClientWindowViewModel);
             managmentClientWindow.DataContext = ManagerClientWindowViewModel;
             managmentClientWindow.ShowDialog();
         }
 
         private bool CanExecuteEditClientCommand(object parameter)
         {
-            if (RegisteredUser != null &&
-                RegisteredUser.AccessLevel == EmployeeAccessLevel.Manager &&
-                SelectedClient != null)
+            // Изменять может и консультант и менеджер. Но у консультанта урезаны возможности по изменению
+            if (RegisteredUser != null && SelectedClient != null)
             {
                 return true;
             }
@@ -247,18 +263,23 @@ namespace Bank_StashYourCrap.ViewModels
                 Owner = Application.Current.MainWindow,
             };
             ManagerClientWindow = managmentClientWindow;
-            managmentClientWindow.Closed += OnManagerClientWindowClosed!;
+            managmentClientWindow.Closed += OnDialogWindowClosed!;
 
             var managerClientWindowViewModel = new ManagerClientWindowViewModel(_clientsService, Localization, SelectedClient!);
             ManagerClientWindowViewModel = managerClientWindowViewModel;
+
             managerClientWindowViewModel.DeleteAction += _clientsService.DeleteClient;
+            managerClientWindowViewModel.isDeleteActionHandlerAttached = true;
+
             managerClientWindowViewModel.Status = Localization.StringLibrary[56];
+            SetDataEditingRights(managerClientWindowViewModel);
             managmentClientWindow.DataContext = ManagerClientWindowViewModel;
             managmentClientWindow.ShowDialog();
         }
 
         private bool CanExecuteDeleteClientCommand(object parameter)
         {
+            // Удалять может только менеджер
             if (RegisteredUser != null &&
                 RegisteredUser.AccessLevel == EmployeeAccessLevel.Manager &&
                 SelectedClient != null)
@@ -269,21 +290,86 @@ namespace Bank_StashYourCrap.ViewModels
         }
         #endregion
 
-        private void OnManagerClientWindowClosed(object sender, EventArgs e)
+        // Дополнительные меторды для создания окна менеджера клиента
+        #region Установки события после закрытия окна менеджера и установка открытости свойств - только чтение или нет
+
+        // Разный уровень доступа даёт разные права по возможности редактирования всяких свойств клиента
+        // Права редактирования также зависят от того, какое действие выбрано, удаление, изменение, добавление.
+        // Этот метод может работать только с объектом ManagerClientWindowViewModel
+        private void SetDataEditingRights(ManagerClientWindowViewModel managerClientWindowViewModel)
         {
-            ((Window)sender).Closed -= OnManagerClientWindowClosed!;
-            RegisteredUser = RegistrationEmployeeWindowViewModel?.ConfirmUser;
+            if (RegisteredUser == null)
+                throw new NotImplementedException("Пользователь не зарегестрирован");
+
+            // По умолчанию во всех свойствах стоит true (т.е. Только для чтения)
+            // Тут надо только разрешать свойства для изменения - ставить false
+            if (managerClientWindowViewModel.isAddActionHandlerAttached)
+            {
+                if (RegisteredUser.AccessLevel == EmployeeAccessLevel.Manager)
+                {
+                    managerClientWindowViewModel.IsReadOnlyNameTextBox = false;
+                    managerClientWindowViewModel.IsReadOnlySurnameTextBox = false;
+                    managerClientWindowViewModel.IsReadOnlyPatronymicTextBox = false;
+                    managerClientWindowViewModel.IsReadOnlyPassSeriesTextBox = false;
+                    managerClientWindowViewModel.IsReadOnlyPassNumberTextBox = false;
+                    managerClientWindowViewModel.IsReadOnlyPhoneNumberTextBox = false;
+                    managerClientWindowViewModel.IsReadOnlyAccountNumberTextBox = false;
+                    managerClientWindowViewModel.IsEnableAccountTypeComboBoxSelected = true;
+                }
+            }
+            else if (managerClientWindowViewModel.isUpdateActionHandlerAttached)
+            {
+                if (RegisteredUser.AccessLevel == EmployeeAccessLevel.Consultant)
+                {
+                    managerClientWindowViewModel.IsReadOnlyPhoneNumberTextBox = false;
+                    managerClientWindowViewModel.VisibilityTextBoxes = Visibility.Hidden;
+                }
+                else if (RegisteredUser.AccessLevel == EmployeeAccessLevel.Manager)
+                {
+                    managerClientWindowViewModel.IsReadOnlyNameTextBox = false;
+                    managerClientWindowViewModel.IsReadOnlySurnameTextBox = false;
+                    managerClientWindowViewModel.IsReadOnlyPatronymicTextBox = false;
+                    managerClientWindowViewModel.IsReadOnlyPhoneNumberTextBox = false;
+                    managerClientWindowViewModel.IsReadOnlyAccountNumberTextBox = false;
+                    managerClientWindowViewModel.IsEnableAccountTypeComboBoxSelected = true;
+                }
+            }
+            else if (managerClientWindowViewModel.isDeleteActionHandlerAttached)
+            {
+                return;
+            }
+            else
+            {
+                throw new NotImplementedException("Не выбранно действие для окна менеждера.");
+            }
+        }
+
+        private void OnDialogWindowClosed(object sender, EventArgs e)
+        {
+            ((Window)sender).Closed -= OnDialogWindowClosed!;
+            RegisteredUser ??= RegistrationEmployeeWindowViewModel?.ConfirmUser;
             if (RegisteredUser != null)
             {
-                Clients = _clientsService.GetAllClients(RegisteredUser);
+                Clients = _clientsService.GetAllClients();
+
+                if (RegisteredUser.AccessLevel == EmployeeAccessLevel.Consultant)
+                {
+                    VisibilityTextBoxes = Visibility.Hidden;
+                }
+                else
+                {
+                    VisibilityTextBoxes = Visibility.Visible;
+                }
             }
             else
             {
                 Clients = null;
             }
             UserRegistrationChecks();
+            ManagerClientWindowViewModel = null;
             RegistrationEmployeeWindow = null;
         }
+        #endregion
 
         // Прочие команды
         #region Команда найти клиента по номеру и серии паспорта
@@ -332,7 +418,7 @@ namespace Bank_StashYourCrap.ViewModels
             RegistrationEmployeeWindow = registrationWindow;
 
             registrationWindow.Title = Localization.StringLibrary[26];
-            registrationWindow.Closed += OnRegistrationWindowClosed!;
+            registrationWindow.Closed += OnDialogWindowClosed!;
 
             var registrationWindowViewModel = new RegistrationEmployeeWindowViewModel(_employeesService);
             registrationWindowViewModel.Localization = Localization;
@@ -346,17 +432,7 @@ namespace Bank_StashYourCrap.ViewModels
             return RegisteredUser == null;
         }
 
-        private void OnRegistrationWindowClosed(object sender, EventArgs e)
-        {
-            ((Window)sender).Closed -= OnRegistrationWindowClosed!;
-            RegisteredUser = RegistrationEmployeeWindowViewModel?.ConfirmUser;
-            if (RegisteredUser != null)
-            {
-                Clients = _clientsService.GetAllClients(RegisteredUser);
-                UserRegistrationChecks();
-            }
-            RegistrationEmployeeWindow = null;
-        }
+        
         #endregion
 
         #region Команда выйти из системы
@@ -382,15 +458,16 @@ namespace Bank_StashYourCrap.ViewModels
         {
             SetupRussianLocalization();
             UserRegistrationChecks();
+            Title = Localization.StringLibrary[0];
         }
 
         private bool CanExecuteSetupRussianLanguageCommand(object parameter)
         {
-            if (Localization is EngLang)
+            if (Localization is RusLang)
             {
-                return true;
+                return false;
             }
-            return false;
+            return true;
         }
         #endregion
 
@@ -401,15 +478,16 @@ namespace Bank_StashYourCrap.ViewModels
         {
             SetupEnglishLocalization();
             UserRegistrationChecks();
+            Title = Localization.StringLibrary[0];
         }
 
         private bool CanExecuteSetupEnglishLanguageCommand(object parameter)
         {
-            if (Localization is RusLang)
+            if (Localization is EngLang)
             {
-                return true;
+                return false;
             }
-            return false;
+            return true;
         }
         #endregion
     }
