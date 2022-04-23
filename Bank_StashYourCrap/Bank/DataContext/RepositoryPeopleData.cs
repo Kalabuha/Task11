@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using Bank_StashYourCrap.Bank.PeopleModels.Base;
 using Bank_StashYourCrap.Bank.PeopleModels.Clients;
 using Bank_StashYourCrap.Bank.PeopleModels.Employees;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Bank_StashYourCrap.Bank.DataContext
 {
@@ -95,7 +97,7 @@ namespace Bank_StashYourCrap.Bank.DataContext
             return oneMan;
         }
 
-        internal void AddMan<TMan>(TMan? newMan) where TMan : Human
+        internal async Task AddManAsync<TMan>(TMan? newMan) where TMan : Human
         {
             var people = GetCollectionPeople<TMan>();
             if (newMan == null || people == null)
@@ -104,10 +106,10 @@ namespace Bank_StashYourCrap.Bank.DataContext
             }
 
             people.Add(newMan);
-            SaveData(people);
+            await Task.Run(() => SaveData(people));
         }
 
-        internal void EditMan<TMan>(TMan? changedMan) where TMan : Human
+        internal async Task EditManAsync<TMan>(TMan? changedMan) where TMan : Human
         {
             var people = GetCollectionPeople<TMan>();
             if (changedMan == null || people == null)
@@ -128,10 +130,10 @@ namespace Bank_StashYourCrap.Bank.DataContext
                 return;
             }
             people[indexPerson] = changedMan;
-            SaveData(people);
+            await Task.Run(() => SaveData(people));
         }
 
-        internal void DeleteMan<TMan>(TMan? removedMan) where TMan : Human
+        internal async Task DeleteManAsync<TMan>(TMan? removedMan) where TMan : Human
         {
             var people = GetCollectionPeople<TMan>();
             if (removedMan == null || people == null)
@@ -149,7 +151,7 @@ namespace Bank_StashYourCrap.Bank.DataContext
             var isRemove = people.Remove(personYouWantToRemove);
             if (isRemove == true)
             {
-                SaveData(people);
+                await Task.Run(() => SaveData(people));
             }
         }
 
@@ -158,11 +160,12 @@ namespace Bank_StashYourCrap.Bank.DataContext
             // _pathGenericFile меняется в зависимости от того, когой тип будет использоваться в TMan.
             // _pathDirectoryData не меняется, устанавливается в конструкторе
             var fileFullPath = Path.Combine(_pathDirectoryData, _pathGenericFile);
+            var json = JsonConvert.SerializeObject(people, Formatting.Indented);
 
             using (StreamWriter sw = new StreamWriter(fileFullPath, false))
             {
-                var json = JsonConvert.SerializeObject(people, Formatting.Indented);
                 sw.WriteLine(json);
+                Thread.Sleep(10000); // Имитация долгой записи данных в файлы или в БД.
             }
         }
     }

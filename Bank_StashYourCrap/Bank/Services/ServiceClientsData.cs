@@ -78,19 +78,19 @@ namespace Bank_StashYourCrap.Bank.Services
                 return false;
             }
 
-            _repository.AddMan(newClientEntity);
+            _repository.AddManAsync(newClientEntity);
             return true;
         }
 
         public void EditClient(ClientModel editClientModel)
         {
-            _repository.EditMan(editClientModel.ConvertModelToEntity());
+            _repository.EditManAsync(editClientModel.ConvertModelToEntity());
         }
 
         public void DeleteClient(ClientModel deleteClientModel)
         {
             // Это же банковское приложение. Тут нужно сделать запрет удаления должников банка :)
-            _repository.DeleteMan(deleteClientModel.ConvertModelToEntity());
+            _repository.DeleteManAsync(deleteClientModel.ConvertModelToEntity());
         }
 
     }
