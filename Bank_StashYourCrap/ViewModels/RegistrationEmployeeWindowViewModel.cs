@@ -6,6 +6,7 @@ using Bank_StashYourCrap.Localizations.Base;
 using Bank_StashYourCrap.Models;
 using Bank_StashYourCrap.ViewModels.Base;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -15,14 +16,21 @@ namespace Bank_StashYourCrap.ViewModels
     {
         private readonly ServiceEmployeesData _serviceEmployees;
 
-        public RegistrationEmployeeWindowViewModel(ServiceEmployeesData serviceEmployees)
+        private RegistrationEmployeeWindowViewModel(
+            ServiceEmployeesData serviceEmployees,
+            ObservableCollection<EmployeeModel> employees)
         {
             _serviceEmployees = serviceEmployees;
-
-            Employees = _serviceEmployees.GetAllEmployees();
-
+            Employees = employees;
             ConfirmEmployeeCommand = new ActionCommand(
                 execute: OnExecuteConfirmEmployeeCommand, can: CanExecuteConfirmEmployeeCommand);
+        }
+
+        public static async Task<RegistrationEmployeeWindowViewModel> 
+            CreateAsync(ServiceEmployeesData serviceEmployees)
+        {
+            var employees = await serviceEmployees.GetAllEmployeesAsync();
+            return new RegistrationEmployeeWindowViewModel(serviceEmployees, employees);
         }
 
         #region Свойство локализация
@@ -56,9 +64,9 @@ namespace Bank_StashYourCrap.ViewModels
         #region Команда подтвердить выбор пользователя
         public ICommand ConfirmEmployeeCommand { get; private set; } = default!;
 
-        private void OnExecuteConfirmEmployeeCommand(object parameter)
+        private async void OnExecuteConfirmEmployeeCommand(object parameter)
         {
-            ConfirmUser = _serviceEmployees.GetEmployee(SelectedUser!);
+            ConfirmUser = await _serviceEmployees.GetEmployee(SelectedUser!);
             var window = (Window)parameter;
             window.Close();
         }

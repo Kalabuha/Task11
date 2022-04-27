@@ -64,7 +64,7 @@ namespace Bank_StashYourCrap.Bank.DataContext
             }
         }
 
-        internal List<TMan>? GetCollectionPeople<TMan>() where TMan : Human
+        internal async Task<List<TMan>?> GetCollectionPeopleAsync<TMan>() where TMan : Human
         {
             DefineFileForWritingAndReading<TMan>();
 
@@ -75,21 +75,20 @@ namespace Bank_StashYourCrap.Bank.DataContext
             CheckingAndCreatingDirectories(_pathDirectoryData);
             CheckingAndCreatingFile(fileFullPath);
 
-            List<TMan>? people = null;
+            string AllLine;
             using (StreamReader sr = new StreamReader(fileFullPath, Encoding.UTF8))
             {
-                var AllLine = sr.ReadToEnd();
-
-                people = JsonConvert.DeserializeObject<List<TMan>>(AllLine);
+                AllLine = await sr.ReadToEndAsync();
             }
 
+            var people = JsonConvert.DeserializeObject<List<TMan>>(AllLine);
             return people;
         }
 
         // Чтобы найти человека, нужно знать его серию и номер паспорта.
-        internal TMan? GetOneMan<TMan>(int passSeries, int passNumber) where TMan : Human
+        internal async Task<TMan?> GetOneManAsync<TMan>(int passSeries, int passNumber) where TMan : Human
         {
-            var people = GetCollectionPeople<TMan>();
+             var people = await GetCollectionPeopleAsync<TMan>();
 
             var oneMan = people?
                 .FirstOrDefault(m => m.PassSeries == passSeries && m.PassNumber == passNumber);
@@ -99,19 +98,19 @@ namespace Bank_StashYourCrap.Bank.DataContext
 
         internal async Task AddManAsync<TMan>(TMan? newMan) where TMan : Human
         {
-            var people = GetCollectionPeople<TMan>();
+            var people = await GetCollectionPeopleAsync<TMan>();
             if (newMan == null || people == null)
             {
                 return;
             }
 
             people.Add(newMan);
-            await Task.Run(() => SaveData(people));
+            await SaveDataAsync(people);
         }
 
         internal async Task EditManAsync<TMan>(TMan? changedMan) where TMan : Human
         {
-            var people = GetCollectionPeople<TMan>();
+            var people = await GetCollectionPeopleAsync<TMan>();
             if (changedMan == null || people == null)
             {
                 return;
@@ -130,12 +129,12 @@ namespace Bank_StashYourCrap.Bank.DataContext
                 return;
             }
             people[indexPerson] = changedMan;
-            await Task.Run(() => SaveData(people));
+            await SaveDataAsync(people);
         }
 
         internal async Task DeleteManAsync<TMan>(TMan? removedMan) where TMan : Human
         {
-            var people = GetCollectionPeople<TMan>();
+            var people = await GetCollectionPeopleAsync<TMan>();
             if (removedMan == null || people == null)
             {
                 return;
@@ -151,21 +150,20 @@ namespace Bank_StashYourCrap.Bank.DataContext
             var isRemove = people.Remove(personYouWantToRemove);
             if (isRemove == true)
             {
-                await Task.Run(() => SaveData(people));
+                await SaveDataAsync(people);
             }
         }
 
-        private void SaveData<TMan>(List<TMan> people) where TMan : Human
+        private async Task SaveDataAsync<TMan>(List<TMan> people) where TMan : Human
         {
             // _pathGenericFile меняется в зависимости от того, когой тип будет использоваться в TMan.
             // _pathDirectoryData не меняется, устанавливается в конструкторе
             var fileFullPath = Path.Combine(_pathDirectoryData, _pathGenericFile);
             var json = JsonConvert.SerializeObject(people, Formatting.Indented);
 
-            using (StreamWriter sw = new StreamWriter(fileFullPath, false))
+            await using (StreamWriter sw = new StreamWriter(fileFullPath, false))
             {
-                sw.WriteLine(json);
-                Thread.Sleep(10000); // Имитация долгой записи данных в файлы или в БД.
+                await sw.WriteLineAsync(json);
             }
         }
     }

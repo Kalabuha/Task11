@@ -6,6 +6,7 @@ using Bank_StashYourCrap.ViewModels.Base;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -17,13 +18,13 @@ namespace Bank_StashYourCrap.ViewModels
         private readonly ServiceDataVerification _serviceDataVerification;
 
         // Основные события для данного окна. Два из них должны быть null. Булевые поля для простоты проверки.
-        public event Func<ClientModel, bool>? AddAction;
+        public event Func<ClientModel, Task<bool>>? AddAction;
         public bool isAddActionHandlerAttached = false;
 
-        public event Action<ClientModel>? UpdateAction;
+        public event Func<ClientModel, Task>? UpdateAction;
         public bool isUpdateActionHandlerAttached = false;
 
-        public event Action<ClientModel>? DeleteAction;
+        public event Func<ClientModel, Task>? DeleteAction;
         public bool isDeleteActionHandlerAttached = false;
 
         public AppLocalization Localization { get; }
@@ -389,7 +390,7 @@ namespace Bank_StashYourCrap.ViewModels
         #region Команда подтвердить выбранное действие (добавить, изменить или удалить клиента)
         // Create, Update, Delete - CUD
         public ICommand CUDActionCommand { get; private set; } = default!;
-        private void OnExecuteCUDActionCommand(object parameter)
+        private async void OnExecuteCUDActionCommand(object parameter)
         {
             bool IsValidAllData = CheckValidityAllData();
 
@@ -397,9 +398,13 @@ namespace Bank_StashYourCrap.ViewModels
             {
                 var newClient = CreateClientModel();
                 // Здесь выполняется основное действие для окна.
-                bool? result = AddAction?.Invoke(newClient);
-                UpdateAction?.Invoke(newClient);
-                DeleteAction?.Invoke(newClient);
+                bool? result = AddAction == null 
+                    ? null 
+                    : await AddAction(newClient);
+                if(UpdateAction != null)
+                    await UpdateAction(newClient);
+                if(DeleteAction != null)
+                    await DeleteAction(newClient);
                 if (result != null && result == false)
                 {
                     CanselAddClientLabel = Localization.StringLibrary[54];

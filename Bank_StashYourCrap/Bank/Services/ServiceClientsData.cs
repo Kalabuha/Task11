@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Bank_StashYourCrap.Bank.Services
 {
@@ -23,8 +24,7 @@ namespace Bank_StashYourCrap.Bank.Services
         // Проверка коллекции данных на совподения
         public ObservableCollection<ClientModel> FindMatchingPassportsInDataCollection()
         {
-            var allClientsEntities = _repository.GetCollectionPeople<Client>() ?? new List<Client>();
-
+            var allClientsEntities = _repository.GetCollectionPeopleAsync<Client>().Result;
             // HashSet нужен только для проверки совподений паспортов
             var uniqueClients = new HashSet<(int series, int number)>();
 
@@ -57,20 +57,22 @@ namespace Bank_StashYourCrap.Bank.Services
             return allTypesAccountAsString;
         }
 
-        public ObservableCollection<ClientModel> GetAllClients()
+        public async Task<ObservableCollection<ClientModel>> GetAllClientsAsync()
         {
-            var allClientsEntities = _repository.GetCollectionPeople<Client>() ?? new List<Client>();
+            var allClientsEntities = await _repository.GetCollectionPeopleAsync<Client>();
+
+            allClientsEntities ??= new List<Client>();
 
             var allClientsModels = allClientsEntities.Select(c => c.ConvertEntityToModel());
 
             return new ObservableCollection<ClientModel>(allClientsModels);
         }
 
-        public bool AddClient(ClientModel newClientModel)
+        public async Task<bool> AddClientAsync(ClientModel newClientModel)
         {
             var newClientEntity = newClientModel.ConvertModelToEntity();
 
-            var clientEntity = _repository.GetOneMan<Client>(newClientEntity.PassSeries, newClientEntity.PassNumber);
+            var clientEntity = await _repository.GetOneManAsync<Client>(newClientEntity.PassSeries, newClientEntity.PassNumber);
 
             // Если будет получен результат отличный от null, добавлять нельзя.
             if (clientEntity != null)
@@ -78,19 +80,19 @@ namespace Bank_StashYourCrap.Bank.Services
                 return false;
             }
 
-            _repository.AddManAsync(newClientEntity);
+            await _repository.AddManAsync(newClientEntity);
             return true;
         }
 
-        public void EditClient(ClientModel editClientModel)
+        public async Task EditClientAsync(ClientModel editClientModel)
         {
-            _repository.EditManAsync(editClientModel.ConvertModelToEntity());
+            await _repository.EditManAsync(editClientModel.ConvertModelToEntity());
         }
 
-        public void DeleteClient(ClientModel deleteClientModel)
+        public async Task DeleteClientAsync(ClientModel deleteClientModel)
         {
             // Это же банковское приложение. Тут нужно сделать запрет удаления должников банка :)
-            _repository.DeleteManAsync(deleteClientModel.ConvertModelToEntity());
+            await _repository.DeleteManAsync(deleteClientModel.ConvertModelToEntity());
         }
 
     }

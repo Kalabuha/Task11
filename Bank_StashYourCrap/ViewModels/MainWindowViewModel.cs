@@ -198,7 +198,7 @@ namespace Bank_StashYourCrap.ViewModels
             var managerClientWindowViewModel = new ManagerClientWindowViewModel(_clientsService, Localization, newClient);
             ManagerClientWindowViewModel = managerClientWindowViewModel;
 
-            managerClientWindowViewModel.AddAction += _clientsService.AddClient;
+            managerClientWindowViewModel.AddAction += _clientsService.AddClientAsync;
             managerClientWindowViewModel.isAddActionHandlerAttached = true;
 
             managerClientWindowViewModel.Status = Localization.StringLibrary[30];
@@ -233,7 +233,7 @@ namespace Bank_StashYourCrap.ViewModels
             var managerClientWindowViewModel = new ManagerClientWindowViewModel(_clientsService, Localization, SelectedClient!);
             ManagerClientWindowViewModel = managerClientWindowViewModel;
 
-            managerClientWindowViewModel.UpdateAction += _clientsService.EditClient;
+            managerClientWindowViewModel.UpdateAction += _clientsService.EditClientAsync;
             managerClientWindowViewModel.isUpdateActionHandlerAttached = true;
 
             managerClientWindowViewModel.Status = Localization.StringLibrary[55];
@@ -268,7 +268,7 @@ namespace Bank_StashYourCrap.ViewModels
             var managerClientWindowViewModel = new ManagerClientWindowViewModel(_clientsService, Localization, SelectedClient!);
             ManagerClientWindowViewModel = managerClientWindowViewModel;
 
-            managerClientWindowViewModel.DeleteAction += _clientsService.DeleteClient;
+            managerClientWindowViewModel.DeleteAction += _clientsService.DeleteClientAsync;
             managerClientWindowViewModel.isDeleteActionHandlerAttached = true;
 
             managerClientWindowViewModel.Status = Localization.StringLibrary[56];
@@ -344,13 +344,13 @@ namespace Bank_StashYourCrap.ViewModels
             }
         }
 
-        private void OnDialogWindowClosed(object sender, EventArgs e)
+        private async void OnDialogWindowClosed(object sender, EventArgs e)
         {
             ((Window)sender).Closed -= OnDialogWindowClosed!;
             RegisteredUser ??= RegistrationEmployeeWindowViewModel?.ConfirmUser;
             if (RegisteredUser != null)
             {
-                Clients = _clientsService.GetAllClients();
+                Clients = await _clientsService.GetAllClientsAsync();
 
                 if (RegisteredUser.AccessLevel == EmployeeAccessLevel.Consultant)
                 {
@@ -409,7 +409,7 @@ namespace Bank_StashYourCrap.ViewModels
         #region Команда вызвать окно регистрации пользователя системы
         public ICommand CallRegistrationWindowCommand { get; private set; } = default!;
 
-        private void OnExecuteCallRegistrationWindowCommand(object parameter)
+        private async void OnExecuteCallRegistrationWindowCommand(object parameter)
         {
             var registrationWindow = new RegistrationEmployeeWindow()
             {
@@ -420,7 +420,7 @@ namespace Bank_StashYourCrap.ViewModels
             registrationWindow.Title = Localization.StringLibrary[26];
             registrationWindow.Closed += OnDialogWindowClosed!;
 
-            var registrationWindowViewModel = new RegistrationEmployeeWindowViewModel(_employeesService);
+            var registrationWindowViewModel = await RegistrationEmployeeWindowViewModel.CreateAsync(_employeesService);
             registrationWindowViewModel.Localization = Localization;
             RegistrationEmployeeWindowViewModel = registrationWindowViewModel;
             registrationWindow.DataContext = registrationWindowViewModel;

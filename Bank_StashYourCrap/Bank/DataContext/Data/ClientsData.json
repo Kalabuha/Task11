@@ -149,7 +149,8 @@
     "Surname": "Mechroman",
     "Patronymic": "Leigh",
     "PhoneNumbers": [
-      "79915079730"
+      "79915079730",
+      "78889678758"
     ],
     "PassSeries": 6541,
     "PassNumber": 512560
@@ -201,25 +202,10 @@
     "Surname": "Hunter",
     "Patronymic": "Enforcer",
     "PhoneNumbers": [
-      "888888888888"
+      "9796576988",
+      "1111111111"
     ],
     "PassSeries": 1285,
     "PassNumber": 124776
-  },
-  {
-    "Accounts": [
-      {
-        "TypeAccount": 2,
-        "NumberAccount": 54376864759442
-      }
-    ],
-    "Name": "RRRRR",
-    "Surname": "sdfafasa",
-    "Patronymic": "afsddsg",
-    "PhoneNumbers": [
-      "5477698457"
-    ],
-    "PassSeries": 4567,
-    "PassNumber": 142365
   }
 ]

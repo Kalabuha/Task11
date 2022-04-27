@@ -20,20 +20,20 @@ namespace Bank_StashYourCrap.Bank.Services
             _repository = repository;
         }
 
-        public ObservableCollection<EmployeeModel> GetAllEmployees()
+        public async Task<ObservableCollection<EmployeeModel>> GetAllEmployeesAsync()
         {
-            var allClientsEntities = _repository.GetCollectionPeople<Employee>() ?? new List<Employee>();
+            var allClientsEntities = await _repository.GetCollectionPeopleAsync<Employee>();
 
             var allClientsModels = allClientsEntities.Select(c => c.ConvertEntityToModel());
 
             return new ObservableCollection<EmployeeModel>(allClientsModels);
         }
 
-        public Employee GetEmployee(EmployeeModel employeeModel)
+        public Task<Employee> GetEmployee(EmployeeModel employeeModel)
         {
             var passSeries = int.Parse(employeeModel.PassSeries);
             var passNumber = int.Parse(employeeModel.PassNumber);
-            return _repository.GetOneMan<Employee>(passSeries, passNumber)!;
+            return _repository.GetOneManAsync<Employee>(passSeries, passNumber);
         }
     }
 }
