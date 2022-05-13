@@ -1,4 +1,8 @@
-﻿using Bank_StashYourCrap.Bank.DataContext;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Input;
+using Microsoft.Data.SqlClient;
 using Bank_StashYourCrap.Bank.PeopleModels.Employees;
 using Bank_StashYourCrap.Bank.PeopleModels.Employees.Base;
 using Bank_StashYourCrap.Bank.Services;
@@ -9,10 +13,12 @@ using Bank_StashYourCrap.Mappers;
 using Bank_StashYourCrap.Models;
 using Bank_StashYourCrap.ViewModels.Base;
 using Bank_StashYourCrap.Views.Windows;
-using System;
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Input;
+using Bank_StashYourCrap.Bank.DataContext.Interfaces;
+using Bank_StashYourCrap.Bank.DataContext.RepositoriesDataFiles;
+using Bank_StashYourCrap.Bank.DataContext.RepositoriesDataBase;
+using Bank_StashYourCrap.Bank.DataContext.RepositoriesDataBase.Scripts;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Bank_StashYourCrap.ViewModels
 {
@@ -24,10 +30,19 @@ namespace Bank_StashYourCrap.ViewModels
         
         public MainWindowViewModel()
         {
-            var repository = new RepositoryPeopleData();
+            IRepositoryClients repositoryClients;
+            IRepositoryEmployees repositoryEmployees;
 
-            _clientsService = new ServiceClientsData(repository);
-            _employeesService = new ServiceEmployeesData(repository);
+            // Старые репозитории
+            //repositoryClients = new RepositoryClientsDataFile();
+            //repositoryEmployees = new RepositoryEmployeesDataFile();
+
+            // Новые репозитории
+            repositoryClients = new RepositoryClientsDataBase();
+            repositoryEmployees = new RepositoryEmployeesDataBase();
+
+            _clientsService = new ServiceClientsData(repositoryClients);
+            _employeesService = new ServiceEmployeesData(repositoryEmployees);
 
             SetupApplicationConfiguration();
             UserRegistrationChecks();
@@ -491,6 +506,4 @@ namespace Bank_StashYourCrap.ViewModels
         }
         #endregion
     }
-
-
 }

@@ -26,7 +26,7 @@
             return true;
         }
 
-        public bool IsValidNumber(string number, byte numberOfDigits)
+        public bool IsValidNumber(string number, byte numberOfDigitsMin, byte numberOfDigitsMax)
         {
             if (IsNullOrWhiteSpaceOrEmpty(number))
             {
@@ -34,40 +34,21 @@
             }
 
             number = number.Trim();
-            if (number.Length != numberOfDigits)
+            if (number.Length <= numberOfDigitsMin)
+            {
+                return false;
+            }
+            if (number.Length >= numberOfDigitsMax)
             {
                 return false;
             }
 
-            return IsValidNumber(number);
+            return IsIntegerNumber(number);
         }
 
-        public bool IsValidPhoneNumber(string phoneNumber)
+        private bool IsIntegerNumber(string number)
         {
-            if (IsNullOrWhiteSpaceOrEmpty(phoneNumber))
-            {
-                return false;
-            }
-
-            phoneNumber = phoneNumber.Trim();
-            if (phoneNumber.Length < 6 || phoneNumber.Length > 12)
-            {
-                return false;
-            }
-
-            return IsValidNumber(phoneNumber);
-        }
-
-        private bool IsValidNumber(string number)
-        {
-            for (int i = 0; i < number.Length; i++)
-            {
-                if (!char.IsDigit(number[i]))
-                {
-                    return false;
-                }
-            }
-            return true;
+            return long.TryParse(number, out long value);
         }
 
         private bool IsNullOrWhiteSpaceOrEmpty(string word)

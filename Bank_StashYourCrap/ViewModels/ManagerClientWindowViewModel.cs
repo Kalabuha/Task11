@@ -291,7 +291,7 @@ namespace Bank_StashYourCrap.ViewModels
         public ICommand AddPhoneNumberCommand { get; private set; }
         private void OnExecuteAddPhoneNumberCommand(object parameter)
         {
-            if (!_serviceDataVerification.IsValidPhoneNumber(PhoneNumberTextBox))
+            if (!_serviceDataVerification.IsValidNumber(PhoneNumberTextBox, 5, 12))
             {
                 PhoneNumberLabel = Localization.StringLibrary[43];
                 return;
@@ -338,7 +338,7 @@ namespace Bank_StashYourCrap.ViewModels
         public ICommand AddBankAccountCommand { get; private set; } = default!;
         private void OnExecuteAddBankAccountCommand(object parameter)
         {
-            if (!_serviceDataVerification.IsValidNumber(AccountNumberTextBox, numberOfDigits: 14))
+            if (!_serviceDataVerification.IsValidNumber(AccountNumberTextBox, 13, 15))
             {
                 AccountNumberLabel = Localization.StringLibrary[45];
                 return;
@@ -460,13 +460,13 @@ namespace Bank_StashYourCrap.ViewModels
                 PatronymicLabel = Localization.StringLibrary[49];
             }
             else PatronymicLabel = "";
-            if (!_serviceDataVerification.IsValidNumber(PassSeriesTextBox, numberOfDigits: 4))
+            if (!_serviceDataVerification.IsValidNumber(PassSeriesTextBox, 3, 5))
             {
                 IsValidAllData = false;
                 PassSeriesLabel = Localization.StringLibrary[50];
             }
             else PassSeriesLabel = "";
-            if (!_serviceDataVerification.IsValidNumber(_passNumberTextBox, numberOfDigits: 6))
+            if (!_serviceDataVerification.IsValidNumber(_passNumberTextBox, 5, 7))
             {
                 IsValidAllData = false;
                 PassNumberLabel = Localization.StringLibrary[51];
